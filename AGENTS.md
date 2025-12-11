@@ -32,6 +32,7 @@ El asistente debe estar preparado para realizar las siguientes tareas:
 * **Creación de Componentes**: Proporcionar la estructura y el código para componentes esenciales, como `Grillas` y las vistas necesarias para ver las proyecciones.
 * **Manejo de Rutas**: Asistir en la creación de **rutas dinámicas** para las páginas de detalles de cada Pokémon.
 * **Mejoras**: Sugerir implementaciones futuras como **búsqueda** o **filtros** para enriquecer la aplicación.
+* **Tests** Generar los tests unitarios para ir comprobando funcionamientos parciales
 
 ---
 
