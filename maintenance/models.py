@@ -19,12 +19,12 @@ class MaintenanceProfile(models.Model):
         PESADO = "PESADO", "Pesado"
 
     class MaintenanceCode(models.TextChoices):
-        QUINCENAL = "IQ", "Inspección quincenal"
-        BIMESTRAL = "B", "Bimestral"
-        ANUAL = "A", "Anual"
-        BIANUAL = "BI", "Bianual"
-        PENTANUAL = "P", "Pentanual"
-        DECANUAL = "DE", "Decanual"
+        QUINCENAL = "IQ", "Inspección Quincenal"
+        BIMESTRAL = "B", "Inspección Bimestral"
+        ANUAL = "A", "Revisión Anual"
+        BIANUAL = "BI", "Revisión Bianual"
+        PENTANUAL = "P", "Reparación Pentanual"
+        DECANUAL = "DE", "Reparación Decanual"
 
     name = models.CharField(max_length=50, unique=True)
     code = models.CharField(
