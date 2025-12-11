@@ -4,7 +4,7 @@
 
 ### `MaintenanceProfile`
 Define cada ciclo de mantenimiento con disparador dual (kilómetros o tiempo). Incluye:
-- `code` y `name` para identificar el ciclo (e.g., Quincenal, Anual).
+- `code` (elección restringida a IQ, B, A, BI, P, DE) y `name` para identificar el ciclo.
 - `maintenance_type` para diferenciar livianos y pesados.
 - `km_interval` y `time_interval_days` para los límites que disparan la intervención.
 
@@ -15,7 +15,7 @@ Representa los módulos indivisibles de la flota CSR (PK 01-86), con:
 - `total_accumulated_km`, actualizado automáticamente tras registrar odómetros.
 
 ### `MaintenanceEvent`
-Registra la última intervención aplicada a un módulo para un perfil concreto. Guarda la fecha y el odómetro al momento del servicio.
+Registra la última intervención aplicada a un módulo para un perfil concreto (siguiendo la abreviatura normativa definida en el `MaintenanceProfile`). Guarda la fecha y el odómetro al momento del servicio.
 
 ### `OdometerLog`
 Tabla transaccional de lecturas de odómetro por fecha. Calcula `daily_delta_km` al guardarse y actualiza el acumulado del módulo.

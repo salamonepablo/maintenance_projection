@@ -18,8 +18,21 @@ class MaintenanceProfile(models.Model):
         LIVIANO = "LIVIANO", "Liviano"
         PESADO = "PESADO", "Pesado"
 
+    class MaintenanceCode(models.TextChoices):
+        QUINCENAL = "IQ", "Inspección Quincenal"
+        BIMESTRAL = "B", "Inspección Bimestral"
+        ANUAL = "A", "Revisión Anual"
+        BIANUAL = "BI", "Revisión Bianual"
+        PENTANUAL = "P", "Reparación Pentanual"
+        DECANUAL = "DE", "Reparación Decanual"
+
     name = models.CharField(max_length=50, unique=True)
-    code = models.CharField(max_length=20, unique=True)
+    code = models.CharField(
+        max_length=4,
+        unique=True,
+        choices=MaintenanceCode.choices,
+        help_text="Abreviatura normativa del ciclo (p. ej., IQ, B, A, BI, P, DE)",
+    )
     maintenance_type = models.CharField(
         max_length=10, choices=MaintenanceType.choices, default=MaintenanceType.LIVIANO
     )

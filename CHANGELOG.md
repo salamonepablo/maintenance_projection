@@ -9,3 +9,8 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/
 - Modelos iniciales de Django para módulos de flota, perfiles y eventos de mantenimiento, y registros de odómetro.
 - Servicio `ProjectionService` para estimar próximas intervenciones con disparador dual.
 - Documentación en `docs/maintenance_models.md` describiendo los modelos y la lógica de proyección.
+
+## [0.1.1] - 2024-12-12
+### Añadido
+- Restricción de abreviaturas normativas para los perfiles de mantenimiento (IQ, B, A, BI, P, DE) usada por los eventos.
+- Actualización de la documentación de modelos para reflejar las abreviaturas y su uso en los eventos.
