@@ -14,3 +14,12 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/
 ### Añadido
 - Restricción de abreviaturas normativas para los perfiles de mantenimiento (IQ, B, A, BI, P, DE) usada por los eventos.
 - Actualización de la documentación de modelos para reflejar las abreviaturas y su uso en los eventos.
+
+## [0.2.0] - 2025-12-10
+### Añadido
+- Archivo de dependencias `requirements.txt` con Django, psycopg, python-dotenv y django-environ.
+- Guía de configuración inicial en `docs/setup.md` para Windows (PowerShell), incluyendo venv, configuración de `DATABASE_URL`, migraciones y ejecución del servidor.
+
+## [0.2.1] - 2025-12-11
+### Añadido
+- Archivo `.gitignore` con reglas para Python/Django, entornos virtuales, archivos temporales, bases de datos locales, cobertura y configuraciones de IDE.

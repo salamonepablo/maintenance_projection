@@ -1,0 +1,57 @@
+# Python/Django
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+*.egg-info/
+.eggs/
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+
+# Django/Project artifacts
+*.log
+*.pot
+*.pyproj
+*.suo
+*.tmp
+*.bak
+
+# Local settings and secrets
+.env
+.env.*
+*.env
+
+# Databases
+db.sqlite3
+*.sqlite3
+
+# Media and static (generated)
+staticfiles/
+media/
+
+# Coverage and test
+.coverage
+coverage.xml
+htmlcov/
+.pytest_cache/
+.tox/
+
+# IDE/editor
+.vscode/
+.idea/
+*.swp
+*.swn
+*.swm
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Node (if present)
+node_modules/
+dist/
