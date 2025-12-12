@@ -33,6 +33,7 @@ El asistente debe estar preparado para realizar las siguientes tareas:
 * **Manejo de Rutas**: Asistir en la creación de **rutas dinámicas** para las páginas de detalles de cada Pokémon.
 * **Mejoras**: Sugerir implementaciones futuras como **búsqueda** o **filtros** para enriquecer la aplicación.
 * **Tests** Generar los tests unitarios para ir comprobando funcionamientos parciales
+* **Carpeta Context**: En la carpeta context, se van dejando archivos .md con las particularidades del negocio.
 
 ---
 
