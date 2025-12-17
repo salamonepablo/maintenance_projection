@@ -33,13 +33,14 @@ class ImportLegacyDataCommandTests(TestCase):
             "121;45;5089;5645;;5090\n"  # Tripla (id >= 43)
         )
 
-        # CSV de eventos
+        # CSV de eventos (formato SIMAF)
         self.eventos_csv = self.temp_path / "test_eventos.csv"
         self.eventos_csv.write_text(
-            "Id_Mantenimiento;Módulo;Tipo_Mantenimiento;Fecha;Kilometraje;Observaciones\n"
-            "1;M01;IQ;01/01/2025;1000000;Inspección quincenal\n"
-            "2;M01;A;15/06/2025;1200000;Revisión anual\n"
-            "3;M20;B;10/03/2025;950000;Bimestral\n"
+            "Id_OT_Simaf;Formaciones;Módulos;OT_Simaf;Ingreso;Tipo_Tarea;Tarea;Km;Fecha_Inicio;Fecha_Fin;Observaciones;Clase_Vehículos\n"
+            "1;120;1;1001;Programado;Preventivo;IQ1;1.000.000,00;01/01/2025;02/01/2025;Inspección quincenal;C\n"
+            "2;120;1;1002;Programado;Preventivo;AN1;1.200.000,00;15/06/2025;20/06/2025;Revisión anual;C\n"
+            "3;120;20;1003;Programado;Preventivo;IB;950.000,00;10/03/2025;11/03/2025;Bimestral;C\n",
+            encoding="utf-8"
         )
 
         # CSV de lecturas
@@ -101,7 +102,7 @@ class ImportLegacyDataCommandTests(TestCase):
         )
         self.assertEqual(event_iq.event_date, date(2025, 1, 1))
         self.assertEqual(event_iq.odometer_km, 1000000)
-        self.assertEqual(event_iq.notes, "Inspección quincenal")
+        self.assertIn("IQ1", event_iq.notes)
 
         # Verificar perfil Anual
         event_a = MaintenanceEvent.objects.get(
@@ -148,11 +149,12 @@ class ImportLegacyDataCommandTests(TestCase):
 
     def test_import_with_invalid_module_skips_event(self):
         """Valida que eventos de módulos inexistentes se omiten sin fallar."""
-        # Crear CSV con evento para módulo inexistente
+        # Crear CSV con evento para módulo inexistente (formato SIMAF)
         eventos_invalid_csv = self.temp_path / "test_invalid.csv"
         eventos_invalid_csv.write_text(
-            "Id_Mantenimiento;Módulo;Tipo_Mantenimiento;Fecha;Kilometraje;Observaciones\n"
-            "1;M99;IQ;01/01/2025;1000000;Módulo inexistente\n"
+            "Id_OT_Simaf;Formaciones;Módulos;OT_Simaf;Ingreso;Tipo_Tarea;Tarea;Km;Fecha_Inicio;Fecha_Fin;Observaciones;Clase_Vehículos\n"
+            "1;999;99;9999;Programado;Preventivo;IQ1;1.000.000,00;01/01/2025;02/01/2025;Módulo inexistente;C\n",
+            encoding="utf-8"
         )
 
         # No debe fallar, solo omitir
