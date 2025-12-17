@@ -103,9 +103,12 @@ class OdometerLogAdmin(admin.ModelAdmin):
         else:
             color = 'green'
         
+        # Formatear número con separador de miles (punto)
+        formatted_delta = f"{delta:+,}".replace(',', '.')
+        
         return format_html(
-            '<span style="color: {};">{:+,} km</span>',
+            '<span style="color: {};">{} km</span>',
             color,
-            delta
-        ).replace(',', '.')
+            formatted_delta
+        )
     formatted_delta.short_description = 'Delta'
