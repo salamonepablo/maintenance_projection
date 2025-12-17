@@ -72,13 +72,15 @@ python manage.py import_legacy_data --skip-eventos  # Omite eventos
 python manage.py import_legacy_data --help       # Ver todas las opciones
 ```
 
-**Formato de archivos esperado:**
+**Formato de archivos esperado (exportados de SIMAF):**
 
 | Archivo | Columnas requeridas |
 |---------|---------------------|
 | `CSR_Modulos.csv` | FORMACION, MODULO, MC1, R1, R2, MC2 |
-| `CSR_MantEvents.csv` | Id_Mantenimiento, Módulo, Tipo_Mantenimiento, Fecha, Kilometraje |
+| `CSR_MantEvents.csv` | Id_OT_Simaf, Formaciones, Módulos, Tarea, Km, Fecha_Inicio |
 | `CSR_LecturasKms.csv` | Id_Kilometrajes, Módulo, kilometraje, Fecha |
+
+> **Nota**: Los archivos deben usar `;` como separador y formato europeo para números (`1.285.885,00`).
 
 Ver ejemplos en `context/`.
 

@@ -186,8 +186,8 @@ class Command(BaseCommand):
         """
         Carga eventos de mantenimiento desde CSV.
         
-        Formato esperado:
-        - Id_Mantenimiento, Módulo, Tipo_Mantenimiento, Fecha, Kilometraje, Observaciones
+        Formato esperado (CSV real de SIMAF):
+        - Id_OT_Simaf;Formaciones;Módulos;OT_Simaf;Ingreso;Tipo_Tarea;Tarea;Km;Fecha_Inicio;Fecha_Fin;Observaciones;Clase_Vehículos
         """
         self.stdout.write(self.style.HTTP_INFO("\n2️⃣  Cargando eventos de mantenimiento..."))
 
@@ -196,11 +196,15 @@ class Command(BaseCommand):
         except UnicodeDecodeError:
             df = pd.read_csv(csv_path, sep=";", encoding="latin-1")
 
+        # Normalizar nombres de columnas (pueden venir con caracteres extraños por encoding)
+        df.columns = [col.replace("�", "ó").replace("Ã³", "ó") for col in df.columns]
+
         # Mapeo de códigos del CSV a códigos del modelo
+        # Los códigos en el CSV vienen como IQ1, IQ2, IQ3, IB, AN1-AN4, BI1-BI4, P1-P4, DE1-DE4
         code_mapping = {
             "IQ": MaintenanceProfile.MaintenanceCode.QUINCENAL,
-            "B": MaintenanceProfile.MaintenanceCode.BIMESTRAL,
-            "A": MaintenanceProfile.MaintenanceCode.ANUAL,
+            "IB": MaintenanceProfile.MaintenanceCode.BIMESTRAL,  # IB = Inspección Bimestral
+            "AN": MaintenanceProfile.MaintenanceCode.ANUAL,
             "BI": MaintenanceProfile.MaintenanceCode.BIANUAL,
             "P": MaintenanceProfile.MaintenanceCode.PENTANUAL,
             "DE": MaintenanceProfile.MaintenanceCode.DECANUAL,
@@ -211,30 +215,34 @@ class Command(BaseCommand):
 
         for _, row in tqdm(df.iterrows(), total=len(df), desc="Eventos", unit="evt"):
             try:
-                # Extraer módulo (puede venir como "M01" o "01")
-                module_str = str(row.get("Módulo", "")).strip().upper()
-                module_id = int(module_str.replace("M", ""))
+                # Extraer módulo (columna "Módulos" en el CSV real)
+                module_str = str(row.get("Módulos", row.get("Modulos", ""))).strip()
+                if not module_str or module_str == "nan":
+                    events_skipped += 1
+                    continue
+                module_id = int(float(module_str))
 
                 # Buscar módulo
                 try:
                     fleet_module = FleetModule.objects.get(id=module_id)
                 except FleetModule.DoesNotExist:
-                    self.stdout.write(
-                        self.style.WARNING(f"  ⚠️  Módulo {module_id} no existe, evento omitido")
-                    )
                     events_skipped += 1
                     continue
 
-                # Tipo de mantenimiento
-                tipo_code = str(row.get("Tipo_Mantenimiento", "")).strip().upper()
+                # Tipo de mantenimiento (columna "Tarea" en el CSV real: IQ1, IQ2, IQ3, IB, AN1, etc.)
+                tarea = str(row.get("Tarea", "")).strip().upper()
+                
+                # Extraer código base (IQ1, IQ2, IQ3 → IQ; AN1, AN2 → AN; etc.)
+                # Ignoramos tareas que no son de mantenimiento preventivo cíclico
+                if not tarea or tarea in ["", "NAN", "TAREAS DE OT"]:
+                    events_skipped += 1
+                    continue
+                
+                # Extraer prefijo (quitar números del final)
+                tipo_code = "".join(c for c in tarea if not c.isdigit())
                 profile_code = code_mapping.get(tipo_code)
 
                 if not profile_code:
-                    self.stdout.write(
-                        self.style.WARNING(
-                            f"  ⚠️  Código de mantenimiento desconocido: {tipo_code}, evento omitido"
-                        )
-                    )
                     events_skipped += 1
                     continue
 
@@ -244,22 +252,35 @@ class Command(BaseCommand):
                     defaults={
                         "name": dict(MaintenanceProfile.MaintenanceCode.choices)[profile_code],
                         "maintenance_type": MaintenanceProfile.MaintenanceType.LIVIANO
-                        if profile_code in ["IQ", "B"]
+                        if profile_code in ["IQ", "IB"]
                         else MaintenanceProfile.MaintenanceType.PESADO,
                     },
                 )
 
-                # Parsear fecha (formato DD/MM/YYYY)
-                fecha_str = str(row.get("Fecha", "")).strip()
+                # Parsear fecha (columna "Fecha_Inicio" en el CSV real, formato DD/MM/YYYY)
+                fecha_str = str(row.get("Fecha_Inicio", row.get("Fecha", ""))).strip()
+                if not fecha_str or fecha_str == "nan":
+                    events_skipped += 1
+                    continue
                 event_date = datetime.strptime(fecha_str, "%d/%m/%Y").date()
 
-                # Kilometraje (puede venir con puntos como separadores de miles)
-                km_str = str(row.get("Kilometraje", "0")).replace(".", "").replace(",", ".")
+                # Kilometraje (columna "Km" en el CSV real, formato "1.281.425,00")
+                km_str = str(row.get("Km", row.get("Kilometraje", "0")))
+                if km_str in ["", "nan", "None"]:
+                    km_str = "0"
+                km_str = km_str.replace(".", "").replace(",", ".")
                 odometer_km = int(float(km_str))
 
                 # Observaciones
                 notes = str(row.get("Observaciones", "")).strip()
-
+                if notes == "nan":
+                    notes = ""
+                
+                # Guardar también el código de tarea completo (IQ1, IQ2, etc.)
+                if notes:
+                    notes = f"{tarea} - {notes}"
+                else:
+                    notes = tarea
                 # Crear evento
                 MaintenanceEvent.objects.get_or_create(
                     fleet_module=fleet_module,
@@ -276,7 +297,7 @@ class Command(BaseCommand):
             except Exception as e:
                 self.stdout.write(
                     self.style.WARNING(
-                        f"  ⚠️  Error procesando evento {row.get('Id_Mantenimiento', 'N/A')}: {e}"
+                        f"  ⚠️  Error procesando evento fila {_ + 2}: {e}"
                     )
                 )
                 events_skipped += 1
@@ -291,8 +312,8 @@ class Command(BaseCommand):
         """
         Carga lecturas de odómetro desde CSV.
         
-        Formato esperado:
-        - Id_Kilometrajes, Módulo, kilometraje, Fecha
+        Formato esperado (CSV real):
+        - Id_Kilometrajes;Módulo;kilometraje;Fecha
         
         Importante: El CSV debe procesarse ordenado por fecha ascendente para calcular deltas correctos.
         """
@@ -303,17 +324,34 @@ class Command(BaseCommand):
         except UnicodeDecodeError:
             df = pd.read_csv(csv_path, sep=";", encoding="latin-1")
 
+        # Normalizar nombres de columnas (pueden venir con caracteres extraños por encoding)
+        df.columns = [col.replace("�", "ó").replace("Ã³", "ó") for col in df.columns]
+        
+        # Buscar columna de módulo (puede ser "Módulo" o "Modulo")
+        modulo_col = None
+        for col in df.columns:
+            if "dulo" in col.lower():
+                modulo_col = col
+                break
+        
+        if not modulo_col:
+            self.stdout.write(self.style.ERROR(f"  ❌ No se encontró columna de módulo. Columnas: {df.columns.tolist()}"))
+            return
+
         # Parsear fechas y ordenar cronológicamente
         df["Fecha_parsed"] = pd.to_datetime(df["Fecha"], format="%d/%m/%Y", errors="coerce")
-        df = df.sort_values(["Módulo", "Fecha_parsed"])
+        df = df.sort_values([modulo_col, "Fecha_parsed"])
 
         readings_created = 0
         readings_skipped = 0
 
         for _, row in tqdm(df.iterrows(), total=len(df), desc="Lecturas", unit="lec"):
             try:
-                # Extraer módulo
-                module_str = str(row.get("Módulo", "")).strip().upper()
+                # Extraer módulo (viene como "M01", "M02", etc.)
+                module_str = str(row.get(modulo_col, "")).strip().upper()
+                if not module_str or module_str == "NAN":
+                    readings_skipped += 1
+                    continue
                 module_id = int(module_str.replace("M", ""))
 
                 # Buscar módulo

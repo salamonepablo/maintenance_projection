@@ -40,6 +40,14 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/
 - Archivo `.github/copilot-instructions.md` con guía para agentes de IA sobre arquitectura, patrones y workflows del proyecto.
 - README actualizado con secciones de instalación, uso del ETL, estructura del proyecto y comandos de testing.
 
+## [0.4.1] - 2025-12-17
+### Corregido
+- Comando `import_legacy_data` actualizado para soportar formato real de CSV exportado por SIMAF.
+- Mapeo de columnas corregido: `Módulos` → módulo, `Tarea` → tipo mantenimiento, `Km` → kilometraje, `Fecha_Inicio` → fecha.
+- Parseo robusto de códigos de tarea (IQ1, IQ2, IQ3, IB, AN1-AN4, BI1-BI4, P1-P4, DE1-DE4).
+- Manejo de encoding UTF-8/Latin-1 y caracteres especiales en nombres de columnas.
+- Validación de celdas vacías y valores NaN para evitar errores de conversión.
+
 ## [0.4.0] - 2025-12-15
 ### Añadido
 - Configuración de `core/settings.py` con `django-environ` para lectura de `.env` y soporte PostgreSQL/SQLite.
