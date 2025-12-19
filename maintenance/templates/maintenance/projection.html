@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Proyección de Mantenimiento - Flota CSR</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f5f5;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 100%;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 30px;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .header-info {
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+            margin-top: 15px;
+        }
+
+        .info-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .info-label {
+            font-size: 12px;
+            opacity: 0.9;
+            margin-bottom: 5px;
+        }
+
+        .info-value {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        /* Controls */
+        .controls {
+            padding: 20px 30px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #dee2e6;
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .control-group label {
+            font-size: 12px;
+            font-weight: 600;
+            color: #495057;
+        }
+
+        .control-group input {
+            padding: 8px 12px;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            font-size: 14px;
+            width: 150px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: #007bff;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #0056b3;
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #218838;
+        }
+
+        /* Legend */
+        .legend {
+            padding: 20px 30px;
+            background: white;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .legend h3 {
+            font-size: 16px;
+            margin-bottom: 15px;
+            color: #495057;
+        }
+
+        .legend-items {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .legend-color {
+            width: 30px;
+            height: 20px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+        }
+
+        .legend-label {
+            font-size: 13px;
+            color: #495057;
+        }
+
+        /* Table */
+        .table-container {
+            padding: 30px;
+            overflow-x: auto;
+        }
+
+        .projection-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 11px;
+        }
+
+        .projection-table th {
+            background: #e9ecef;
+            padding: 10px 8px;
+            text-align: center;
+            font-weight: 600;
+            color: #495057;
+            border: 1px solid #dee2e6;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .projection-table td {
+            padding: 8px;
+            text-align: center;
+            border: 1px solid #dee2e6;
+        }
+
+        .projection-table tbody tr:hover {
+            background: #f8f9fa;
+        }
+
+        /* Column styles */
+        .col-module {
+            font-weight: 600;
+            background: #f8f9fa;
+        }
+
+        .col-intervention {
+            font-weight: 600;
+        }
+
+        .col-intervention.type-DA {
+            color: #dc3545;
+        }
+
+        .col-intervention.type-P {
+            color: #ffc107;
+        }
+
+        .col-intervention.type-BI {
+            color: #fd7e14;
+        }
+
+        .col-intervention.type-A {
+            color: #007bff;
+        }
+
+        .col-km {
+            text-align: right;
+            font-family: 'Courier New', monospace;
+        }
+
+        /* Cell formats */
+        .cell-reset {
+            background: #d8d8d8 !important;
+            font-weight: 600;
+            color: #000;
+        }
+
+        .cell-exceeds-DA {
+            background: #ffe0e0;
+            color: #ff0000;
+        }
+
+        .cell-exceeds-P {
+            background: #ffffe0;
+            color: #808000;
+        }
+
+        .cell-exceeds-BI {
+            background: #ffe0b0;
+            color: #ff8000;
+        }
+
+        .cell-exceeds-A {
+            background: #e0f0ff;
+            color: #0000ff;
+        }
+
+        /* Module separator */
+        .module-separator {
+            height: 10px;
+            background: transparent;
+        }
+
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 50px;
+            color: #6c757d;
+        }
+
+        /* Error */
+        .error {
+            padding: 30px;
+            text-align: center;
+            color: #dc3545;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header-info {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .control-group input {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>📊 Proyección de Mantenimiento - Flota CSR</h1>
+            <div class="header-info">
+                <div class="info-item">
+                    <span class="info-label">Fecha de Generación</span>
+                    <span class="info-value">{{ generation_date|date:"d/m/Y" }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Total Módulos</span>
+                    <span class="info-value">{{ total_modules }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Km Promedio Mensual</span>
+                    <span class="info-value">{{ monthly_km|floatformat:0 }} km</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Meses Proyectados</span>
+                    <span class="info-value">{{ months_ahead }}</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Controls -->
+        <div class="controls">
+            <form method="GET" style="display: flex; gap: 20px; flex-wrap: wrap; align-items: flex-end;">
+                <div class="control-group">
+                    <label for="months">Meses a proyectar</label>
+                    <input type="number" id="months" name="months" 
+                           value="{{ months_ahead }}" min="1" max="60">
+                </div>
+                <div class="control-group">
+                    <label for="monthly_km">Km promedio mensual</label>
+                    <input type="number" id="monthly_km" name="monthly_km" 
+                           value="{{ monthly_km }}" min="1000" max="50000" step="500">
+                </div>
+                <button type="submit" class="btn btn-primary">🔄 Actualizar Proyección</button>
+            </form>
+            <a href="?months={{ months_ahead }}&monthly_km={{ monthly_km }}&export=excel" 
+               class="btn btn-success">📥 Exportar a Excel</a>
+        </div>
+
+        <!-- Legend -->
+        <div class="legend">
+            <h3>Leyenda de Colores</h3>
+            <div class="legend-items">
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #ffe0e0; border-color: #ff0000;"></div>
+                    <span class="legend-label"><strong>DA</strong> - Excede 1.500.000 km</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #ffffe0; border-color: #808000;"></div>
+                    <span class="legend-label"><strong>P</strong> - Excede 750.000 km</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #ffe0b0; border-color: #ff8000;"></div>
+                    <span class="legend-label"><strong>BI</strong> - Excede 375.000 km</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #e0f0ff; border-color: #0000ff;"></div>
+                    <span class="legend-label"><strong>A</strong> - Excede 187.500 km</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #d8d8d8;"></div>
+                    <span class="legend-label">Reseteo de ciclo</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Table -->
+        {% if projections %}
+        <div class="table-container">
+            <table class="projection-table">
+                <thead>
+                    <tr>
+                        <th rowspan="2">N° Módulo</th>
+                        <th rowspan="2">Intervención</th>
+                        <th rowspan="2">Fecha Último Evento</th>
+                        <th rowspan="2">Km Acumulado</th>
+                        <th colspan="{{ months_ahead }}">Proyección Mensual</th>
+                    </tr>
+                    <tr>
+                        {% for module in projections.modules %}
+                            {% if forloop.first %}
+                                {% for cell in module.rows.0.cells %}
+                                    <th>{{ cell.month }}</th>
+                                {% endfor %}
+                                {% break %}
+                            {% endif %}
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for module in projections.modules %}
+                        {% for row in module.rows %}
+                            <tr>
+                                <!-- N° Módulo (solo en primera fila del módulo) -->
+                                {% if forloop.first %}
+                                    <td rowspan="4" class="col-module">{{ module.module_number }}</td>
+                                {% endif %}
+                                
+                                <!-- Tipo de Intervención -->
+                                <td class="col-intervention type-{{ row.intervention_type }}">
+                                    {{ row.intervention_type }}
+                                </td>
+                                
+                                <!-- Fecha Último Evento -->
+                                <td>
+                                    {% if row.last_event_date %}
+                                        {{ row.last_event_date|date:"d/m/Y" }}
+                                    {% else %}
+                                        N/A
+                                    {% endif %}
+                                </td>
+                                
+                                <!-- Km Acumulado -->
+                                <td class="col-km">{{ row.initial_km|floatformat:0 }}</td>
+                                
+                                <!-- Celdas de proyección -->
+                                {% for cell in row.cells %}
+                                    <td class="col-km 
+                                        {% if cell.is_reset %}cell-reset{% elif cell.exceeds %}cell-exceeds-{{ row.intervention_type }}{% endif %}">
+                                        {% if cell.is_reset %}
+                                            {{ cell.intervention }}
+                                        {% else %}
+                                            {{ cell.km|floatformat:0 }}
+                                        {% endif %}
+                                    </td>
+                                {% endfor %}
+                            </tr>
+                        {% endfor %}
+                        <!-- Separador entre módulos -->
+                        <tr class="module-separator">
+                            <td colspan="100"></td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="error">
+            <h3>⚠️ No se pudo generar la proyección</h3>
+            <p>Por favor, verifica que existan módulos y eventos registrados en el sistema.</p>
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>
