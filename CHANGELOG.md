@@ -19,6 +19,11 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/
 - Manejo de encoding UTF-8/Latin-1 y caracteres especiales en nombres de columnas.
 - Validación de celdas vacías y valores NaN para evitar errores de conversión.
 
+## [0.4.2] - 2025-12-17
+### Corregido
+- Unificación de las vistas de proyección para evitar duplicar lógica entre módulos.
+- Documentación de la fuente oficial de vistas de proyección.
+
 ## [0.4.0] - 2025-12-15
 ### Añadido
 - Configuración de `core/settings.py` con `django-environ` para lectura de `.env` y soporte PostgreSQL/SQLite.
