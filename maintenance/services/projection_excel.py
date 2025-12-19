@@ -7,10 +7,6 @@ from __future__ import annotations
 from datetime import date
 from typing import TYPE_CHECKING
 
-from openpyxl import Workbook
-from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
-from openpyxl.utils import get_column_letter
-
 if TYPE_CHECKING:
     from .projection_grid import ModuleProjectionRow
 
@@ -64,6 +60,17 @@ class ProjectionExcelExporter:
             filepath: Ruta del archivo a crear
             monthly_km: Km promedio mensual usado en proyección
         """
+        from openpyxl import Workbook
+        from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
+        from openpyxl.utils import get_column_letter
+
+        self._Font = Font
+        self._PatternFill = PatternFill
+        self._Alignment = Alignment
+        self._Border = Border
+        self._Side = Side
+        self._get_column_letter = get_column_letter
+
         wb = Workbook()
         ws = wb.active
         ws.title = "Proyección Mantenimiento"
@@ -98,17 +105,17 @@ class ProjectionExcelExporter:
         """Agrega header con información de parámetros"""
         # Título
         ws['A1'] = 'PROYECCIÓN DE MANTENIMIENTO - FLOTA CSR'
-        ws['A1'].font = Font(bold=True, size=14)
-        ws['A1'].alignment = Alignment(horizontal='center')
+        ws['A1'].font = self._Font(bold=True, size=14)
+        ws['A1'].alignment = self._Alignment(horizontal='center')
         ws.merge_cells('A1:F1')
         
         # Fecha de generación
         ws['A2'] = f'Fecha de generación: {date.today().strftime("%d/%m/%Y")}'
-        ws['A2'].font = Font(size=10)
+        ws['A2'].font = self._Font(size=10)
         
         # Km promedio mensual
         ws['A3'] = f'Km promedio mensual: {monthly_km:,} km'
-        ws['A3'].font = Font(size=10, color='0000FF')  # Azul para inputs
+        ws['A3'].font = self._Font(size=10, color='0000FF')  # Azul para inputs
         
         return 5  # Fila donde empezar los datos
     
@@ -137,16 +144,20 @@ class ProjectionExcelExporter:
         # Escribir headers
         for col, header in enumerate(headers, start=1):
             cell = ws.cell(row=start_row, column=col, value=header)
-            cell.font = Font(bold=True, size=10)
-            cell.alignment = Alignment(horizontal='center', vertical='center')
-            cell.fill = PatternFill(start_color='CCCCCC', end_color='CCCCCC', fill_type='solid')
+            cell.font = self._Font(bold=True, size=10)
+            cell.alignment = self._Alignment(horizontal='center', vertical='center')
+            cell.fill = self._PatternFill(
+                start_color='CCCCCC',
+                end_color='CCCCCC',
+                fill_type='solid'
+            )
             
             # Bordes
-            thin_border = Border(
-                left=Side(style='thin'),
-                right=Side(style='thin'),
-                top=Side(style='thin'),
-                bottom=Side(style='thin')
+            thin_border = self._Border(
+                left=self._Side(style='thin'),
+                right=self._Side(style='thin'),
+                top=self._Side(style='thin'),
+                bottom=self._Side(style='thin')
             )
             cell.border = thin_border
         
@@ -164,17 +175,17 @@ class ProjectionExcelExporter:
         for row in rows:
             # Columna 1: N° Módulo
             cell = ws.cell(row=current_row, column=1, value=row.module_number)
-            cell.font = Font(bold=True, size=10)
-            cell.alignment = Alignment(horizontal='center', vertical='center')
+            cell.font = self._Font(bold=True, size=10)
+            cell.alignment = self._Alignment(horizontal='center', vertical='center')
             
             # Columna 2: Tipo de Intervención
             cell = ws.cell(row=current_row, column=2, value=row.intervention_type)
-            cell.font = Font(bold=True, size=10)
-            cell.alignment = Alignment(horizontal='center', vertical='center')
+            cell.font = self._Font(bold=True, size=10)
+            cell.alignment = self._Alignment(horizontal='center', vertical='center')
             
             # Color del tipo según jerarquía
             color = self.COLORS[row.intervention_type]["text"]
-            cell.font = Font(bold=True, size=10, color=color)
+            cell.font = self._Font(bold=True, size=10, color=color)
             
             # Columna 3: Fecha último evento
             date_str = (
@@ -183,12 +194,12 @@ class ProjectionExcelExporter:
                 else 'N/A'
             )
             cell = ws.cell(row=current_row, column=3, value=date_str)
-            cell.alignment = Alignment(horizontal='center', vertical='center')
+            cell.alignment = self._Alignment(horizontal='center', vertical='center')
             
             # Columna 4: Km inicial acumulado
             cell = ws.cell(row=current_row, column=4, value=row.initial_km)
             cell.number_format = '#,##0'
-            cell.alignment = Alignment(horizontal='right', vertical='center')
+            cell.alignment = self._Alignment(horizontal='right', vertical='center')
             
             # Aplicar formato condicional
             self._apply_cell_format(
@@ -205,10 +216,10 @@ class ProjectionExcelExporter:
                 # Si hay reseteo, mostrar código de intervención
                 if grid_cell.is_reset_point:
                     cell.value = grid_cell.intervention_code
-                    cell.font = Font(bold=True, size=10)
-                    cell.alignment = Alignment(horizontal='center', vertical='center')
+                    cell.font = self._Font(bold=True, size=10)
+                    cell.alignment = self._Alignment(horizontal='center', vertical='center')
                     # Color gris para reseteos
-                    cell.fill = PatternFill(
+                    cell.fill = self._PatternFill(
                         start_color=self.COLORS["reset"]["bg"],
                         end_color=self.COLORS["reset"]["bg"],
                         fill_type='solid'
@@ -217,7 +228,7 @@ class ProjectionExcelExporter:
                     # Mostrar km acumulado
                     cell.value = grid_cell.km_accumulated
                     cell.number_format = '#,##0'
-                    cell.alignment = Alignment(horizontal='right', vertical='center')
+                    cell.alignment = self._Alignment(horizontal='right', vertical='center')
                     
                     # Aplicar formato condicional
                     self._apply_cell_format(
@@ -228,11 +239,11 @@ class ProjectionExcelExporter:
                     )
                 
                 # Bordes
-                thin_border = Border(
-                    left=Side(style='thin'),
-                    right=Side(style='thin'),
-                    top=Side(style='thin'),
-                    bottom=Side(style='thin')
+                thin_border = self._Border(
+                    left=self._Side(style='thin'),
+                    right=self._Side(style='thin'),
+                    top=self._Side(style='thin'),
+                    bottom=self._Side(style='thin')
                 )
                 cell.border = thin_border
             
@@ -251,12 +262,12 @@ class ProjectionExcelExporter:
         """Aplica formato condicional a una celda según su valor"""
         if exceeds_threshold:
             colors = self.COLORS[intervention_type]
-            cell.fill = PatternFill(
+            cell.fill = self._PatternFill(
                 start_color=colors["bg"],
                 end_color=colors["bg"],
                 fill_type='solid'
             )
-            cell.font = Font(color=colors["text"], size=10)
+            cell.font = self._Font(color=colors["text"], size=10)
     
     def _adjust_column_widths(self, ws) -> None:
         """Ajusta ancho de columnas automáticamente"""
@@ -272,4 +283,4 @@ class ProjectionExcelExporter:
             column_widths[col] = 12
         
         for col, width in column_widths.items():
-            ws.column_dimensions[get_column_letter(col)].width = width
+            ws.column_dimensions[self._get_column_letter(col)].width = width
