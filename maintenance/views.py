@@ -1,7 +1,11 @@
 """
 Vistas para proyección de mantenimiento.
 """
-from __future__ import annotations
+from maintenance.views_projection import (
+    projection_api,
+    projection_export_excel,
+    projection_view,
+)
 
 import os
 import tempfile
