@@ -1,6 +1,6 @@
 {
   "name": "maintenance_projection",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "description": "Proyección de mantenimiento ferroviario para material rodante argentino",
   "license": "MIT"
 }

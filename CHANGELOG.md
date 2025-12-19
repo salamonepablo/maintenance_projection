@@ -40,6 +40,10 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/
 - Archivo `.github/copilot-instructions.md` con guía para agentes de IA sobre arquitectura, patrones y workflows del proyecto.
 - README actualizado con secciones de instalación, uso del ETL, estructura del proyecto y comandos de testing.
 
+## [0.4.2] - 2025-02-14
+### Añadido
+- Dependencia `openpyxl` para soportar la exportación a Excel desde el comando de proyección.
+
 ## [0.4.1] - 2025-12-17
 ### Corregido
 - Comando `import_legacy_data` actualizado para soportar formato real de CSV exportado por SIMAF.
