@@ -1,3 +1,4 @@
+{% load maintenance_filters %}
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -102,17 +103,17 @@
         }
         
         .btn {
-            padding: 12px 25px;
+            padding: 16px 32px;
             border: none;
             border-radius: 10px;
-            font-size: 15px;
+            font-size: 18px;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s;
             text-decoration: none;
             display: inline-flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
         }
         
         .btn-primary {
@@ -146,9 +147,12 @@
         .stat-card {
             background: white;
             border-radius: 15px;
-            padding: 25px;
+            padding: 20px;
             box-shadow: 0 5px 20px rgba(0,0,0,0.08);
             transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 20px;
         }
         
         .stat-card:hover {
@@ -157,14 +161,14 @@
         }
         
         .stat-icon {
-            width: 50px;
-            height: 50px;
+            width: 55px;
+            height: 55px;
             border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 24px;
-            margin-bottom: 15px;
+            font-size: 28px;
+            flex-shrink: 0;
         }
         
         .stat-icon.blue {
@@ -183,15 +187,21 @@
         }
         
         .stat-value {
-            font-size: 32px;
+            font-size: 28px;
             font-weight: 700;
             color: #333;
-            margin-bottom: 5px;
+            margin-bottom: 0;
+            line-height: 1.2;
         }
         
         .stat-label {
             color: #666;
-            font-size: 14px;
+            font-size: 13px;
+            margin-top: 3px;
+        }
+        
+        .stat-content {
+            flex: 1;
         }
         
         /* Modules Grid */
@@ -384,14 +394,21 @@
         <div class="filters">
             <span class="filter-label">Filtrar por módulo:</span>
             <form method="get" style="display: flex; gap: 15px; flex: 1;">
-                <select name="module" class="filter-select" onchange="this.form.submit()">
-                    <option value="">Todos los módulos ({{ all_modules.count }})</option>
+                <input 
+                    type="text"
+                    name="module" 
+                    class="filter-select" 
+                    placeholder="Escribe número (ej: 73, 07)..."
+                    list="modules-list"
+                    value="{{ filtered_module }}"
+                    onchange="this.form.submit()"
+                />
+                <datalist id="modules-list">
+                    <option value="">Todos los módulos</option>
                     {% for mod in all_modules %}
-                        <option value="{{ mod.id }}" {% if filtered_module == mod.id|stringformat:"s" %}selected{% endif %}>
-                            Módulo {{ mod.id|stringformat:"02d" }} - {{ mod.get_module_type_display }}
-                        </option>
+                        <option value="{{ mod.id }}">{{ mod.id|stringformat:"02d" }} - {{ mod.get_module_type_display }}</option>
                     {% endfor %}
-                </select>
+                </datalist>
                 {% if filtered_module %}
                     <a href="{% url 'maintenance:dashboard' %}" class="btn btn-secondary">
                         ✕ Limpiar filtro
@@ -405,18 +422,24 @@
         <div class="stats-grid">
             <div class="stat-card">
                 <div class="stat-icon blue">🚂</div>
-                <div class="stat-value">{{ stats.total_modules }}</div>
-                <div class="stat-label">Módulos en Servicio</div>
+                <div class="stat-content">
+                    <div class="stat-value">{{ stats.total_modules }}</div>
+                    <div class="stat-label">Módulos en Servicio</div>
+                </div>
             </div>
             <div class="stat-card">
                 <div class="stat-icon green">📈</div>
-                <div class="stat-value">{{ stats.total_km_month|floatformat:0 }} km</div>
-                <div class="stat-label">Recorridos en {{ month_name }}</div>
+                <div class="stat-content">
+                    <div class="stat-value">{{ stats.total_km_month|european_format }} km</div>
+                    <div class="stat-label">Recorridos en {{ month_name }}</div>
+                </div>
             </div>
             <div class="stat-card">
                 <div class="stat-icon orange">⚡</div>
-                <div class="stat-value">{{ stats.avg_daily_fleet|floatformat:0 }} km/día</div>
-                <div class="stat-label">Promedio Diario Flota</div>
+                <div class="stat-content">
+                    <div class="stat-value">{{ stats.avg_daily_fleet|european_format }} km/día</div>
+                    <div class="stat-label">Promedio Diario Flota</div>
+                </div>
             </div>
         </div>
         {% endif %}
@@ -437,19 +460,19 @@
                     <!-- Km Total Acumulado -->
                     <div class="metric">
                         <div class="metric-label">🎯 Kilometraje Total</div>
-                        <div class="metric-value">{{ data.module.total_accumulated_km|floatformat:0 }} km</div>
+                        <div class="metric-value">{{ data.module.total_accumulated_km|european_format }} km</div>
                     </div>
                     
                     <!-- Km este mes -->
                     <div class="metric">
                         <div class="metric-label">📅 Recorrido en {{ month_name }}</div>
-                        <div class="metric-value highlight">{{ data.km_this_month|floatformat:0 }} km</div>
+                        <div class="metric-value highlight">{{ data.km_this_month|european_format }} km</div>
                     </div>
                     
                     <!-- Promedio diario -->
                     <div class="metric">
                         <div class="metric-label">⚡ Promedio Diario (30d)</div>
-                        <div class="metric-value">{{ data.daily_avg_km|floatformat:0 }} km/día</div>
+                        <div class="metric-value">{{ data.daily_avg_km|european_format }} km/día</div>
                     </div>
                     
                     <!-- Último evento -->
@@ -471,7 +494,7 @@
                             </div>
                             <div class="event-row">
                                 <span class="event-label">Km desde entonces:</span>
-                                <span class="event-value">{{ data.last_event.km_since|floatformat:0 }} km</span>
+                                <span class="event-value">{{ data.last_event.km_since|european_format }} km</span>
                             </div>
                         </div>
                         {% else %}
