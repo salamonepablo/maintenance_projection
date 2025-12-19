@@ -4,6 +4,11 @@ Todos los cambios notables de este proyecto se documentarán en este archivo.
 
 El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/) y este proyecto sigue [Versionado Semántico](https://semver.org/lang/es/).
 
+## [0.4.2] - 2025-02-15
+### Añadido
+- Archivo `.env.example` con variables mínimas para configuración inicial.
+- Documentación `docs/configuracion_env.md` con guía de variables de entorno.
+
 ## [0.1.0] - 2024-12-11
 ### Añadido
 - Modelos iniciales de Django para módulos de flota, perfiles y eventos de mantenimiento, y registros de odómetro.
