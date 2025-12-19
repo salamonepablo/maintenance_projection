@@ -5,8 +5,7 @@ Implementa lógica de reseteo en cascada idéntica al código VB Materfer.
 from __future__ import annotations
 
 from dataclasses import dataclass
-from datetime import date, timedelta
-from decimal import Decimal
+from datetime import date
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
@@ -43,8 +42,16 @@ class MaintenanceProjectionGrid:
     - A (Anual): solo resetea A
     """
     
-    # Jerarquía de mayor a menor importancia
+    # Jerarquía de mayor a menor importancia (códigos de visualización)
     HIERARCHY = ["DA", "P", "BI", "A"]
+
+    # Mapeo de códigos visuales a códigos reales de perfil (MaintenanceProfile)
+    PROFILE_CODE_MAP = {
+        "DA": "DE",
+        "P": "P",
+        "BI": "BI",
+        "A": "A",
+    }
     
     # Umbrales de kilometraje para alertas (colores)
     THRESHOLDS = {
@@ -138,10 +145,11 @@ class MaintenanceProjectionGrid:
         
         last_events = {}
         for maint_type in self.HIERARCHY:
+            profile_code = self.PROFILE_CODE_MAP[maint_type]
             event = (
                 MaintenanceEvent.objects
-                .filter(module=module, maintenance_type=maint_type)
-                .order_by('-date', '-odometer_reading')
+                .filter(fleet_module=module, profile__code=profile_code)
+                .order_by('-event_date', '-odometer_km')
                 .first()
             )
             if event:
@@ -176,7 +184,7 @@ class MaintenanceProjectionGrid:
             
             # Fecha del último evento de este tipo
             current_event = last_events.get(maint_type)
-            current_date = current_event.date if current_event else None
+            current_date = current_event.event_date if current_event else None
             
             # Buscar el evento superior más reciente
             most_recent_superior = None
@@ -185,7 +193,7 @@ class MaintenanceProjectionGrid:
             for sup_type in superior_types:
                 sup_event = last_events.get(sup_type)
                 if sup_event:
-                    sup_date = sup_event.date
+                    sup_date = sup_event.event_date
                     # Si no hay fecha actual O el superior es más reciente
                     if (current_date is None or 
                         sup_date > current_date or
@@ -223,8 +231,8 @@ class MaintenanceProjectionGrid:
         
         # Sumar todos los km desde la fecha del evento
         logs_since = OdometerLog.objects.filter(
-            module=module,
-            reading_date__gt=event.date
+            fleet_module=module,
+            reading_date__gt=event.event_date
         ).order_by('reading_date')
         
         km_since = sum(log.daily_delta_km or 0 for log in logs_since)
@@ -272,9 +280,9 @@ class MaintenanceProjectionGrid:
             cells.append(cell)
         
         return ModuleProjectionRow(
-            module_number=module.module_number,
+            module_number=module.id,
             intervention_type=maint_type,
-            last_event_date=last_event.date if last_event else None,
+            last_event_date=last_event.event_date if last_event else None,
             initial_km=initial_km,
             cells=cells
         )

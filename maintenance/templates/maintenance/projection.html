@@ -329,7 +329,7 @@
                 </div>
                 <button type="submit" class="btn btn-primary">🔄 Actualizar Proyección</button>
             </form>
-            <a href="?months={{ months_ahead }}&monthly_km={{ monthly_km }}&export=excel" 
+            <a href="{% url 'maintenance:projection_export' %}?months={{ months_ahead }}&monthly_km={{ monthly_km }}"
                class="btn btn-success">📥 Exportar a Excel</a>
         </div>
 
@@ -373,13 +373,8 @@
                         <th colspan="{{ months_ahead }}">Proyección Mensual</th>
                     </tr>
                     <tr>
-                        {% for module in projections.modules %}
-                            {% if forloop.first %}
-                                {% for cell in module.rows.0.cells %}
-                                    <th>{{ cell.month }}</th>
-                                {% endfor %}
-                                {% break %}
-                            {% endif %}
+                        {% for cell in header_months %}
+                            <th>{{ cell.month }}</th>
                         {% endfor %}
                     </tr>
                 </thead>
