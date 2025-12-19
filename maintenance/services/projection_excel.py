@@ -78,8 +78,8 @@ class ProjectionExcelExporter:
         current_row = self._add_column_headers(ws, current_row, projections)
         
         # Datos de proyección por módulo
-        for module_number in sorted(projections.keys()):
-            rows = projections[module_number]
+        for module_id in sorted(projections.keys()):
+            rows = projections[module_id]
             current_row = self._add_module_data(ws, current_row, rows)
         
         # Ajustar anchos de columna
@@ -163,7 +163,7 @@ class ProjectionExcelExporter:
         
         for row in rows:
             # Columna 1: N° Módulo
-            cell = ws.cell(row=current_row, column=1, value=row.module_number)
+            cell = ws.cell(row=current_row, column=1, value=row.module_id)
             cell.font = Font(bold=True, size=10)
             cell.alignment = Alignment(horizontal='center', vertical='center')
             

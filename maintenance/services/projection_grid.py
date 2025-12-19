@@ -25,7 +25,7 @@ class GridCell:
 @dataclass
 class ModuleProjectionRow:
     """Representa una fila de proyección para un tipo de mantenimiento"""
-    module_number: int
+    module_id: int
     intervention_type: str  # "DA", "P", "BI", "A"
     last_event_date: date | None
     initial_km: int
@@ -45,6 +45,15 @@ class MaintenanceProjectionGrid:
     
     # Jerarquía de mayor a menor importancia
     HIERARCHY = ["DA", "P", "BI", "A"]
+
+    # Mapeo entre código de grilla y código del perfil en base de datos
+    GRID_TO_PROFILE_CODE = {
+        "DA": "DE",
+        "P": "P",
+        "BI": "BI",
+        "A": "A",
+    }
+    PROFILE_TO_GRID_CODE = {value: key for key, value in GRID_TO_PROFILE_CODE.items()}
     
     # Umbrales de kilometraje para alertas (colores)
     THRESHOLDS = {
@@ -120,10 +129,10 @@ class MaintenanceProjectionGrid:
         Genera proyección para múltiples módulos.
         
         Returns:
-            Dict con module_number como key y lista de filas como value
+            Dict con module_id como key y lista de filas como value
         """
         return {
-            module.module_number: self.generate_for_module(
+            module.id: self.generate_for_module(
                 module, months_ahead, start_date
             )
             for module in modules
@@ -138,10 +147,11 @@ class MaintenanceProjectionGrid:
         
         last_events = {}
         for maint_type in self.HIERARCHY:
+            profile_code = self.GRID_TO_PROFILE_CODE.get(maint_type, maint_type)
             event = (
                 MaintenanceEvent.objects
-                .filter(module=module, maintenance_type=maint_type)
-                .order_by('-date', '-odometer_reading')
+                .filter(fleet_module=module, profile__code=profile_code)
+                .order_by('-event_date', '-odometer_km')
                 .first()
             )
             if event:
@@ -176,7 +186,7 @@ class MaintenanceProjectionGrid:
             
             # Fecha del último evento de este tipo
             current_event = last_events.get(maint_type)
-            current_date = current_event.date if current_event else None
+            current_date = current_event.event_date if current_event else None
             
             # Buscar el evento superior más reciente
             most_recent_superior = None
@@ -185,7 +195,7 @@ class MaintenanceProjectionGrid:
             for sup_type in superior_types:
                 sup_event = last_events.get(sup_type)
                 if sup_event:
-                    sup_date = sup_event.date
+                    sup_date = sup_event.event_date
                     # Si no hay fecha actual O el superior es más reciente
                     if (current_date is None or 
                         sup_date > current_date or
@@ -223,8 +233,8 @@ class MaintenanceProjectionGrid:
         
         # Sumar todos los km desde la fecha del evento
         logs_since = OdometerLog.objects.filter(
-            module=module,
-            reading_date__gt=event.date
+            fleet_module=module,
+            reading_date__gt=event.event_date
         ).order_by('reading_date')
         
         km_since = sum(log.daily_delta_km or 0 for log in logs_since)
@@ -272,9 +282,9 @@ class MaintenanceProjectionGrid:
             cells.append(cell)
         
         return ModuleProjectionRow(
-            module_number=module.module_number,
+            module_id=module.id,
             intervention_type=maint_type,
-            last_event_date=last_event.date if last_event else None,
+            last_event_date=last_event.event_date if last_event else None,
             initial_km=initial_km,
             cells=cells
         )
@@ -303,10 +313,10 @@ class MaintenanceProjectionGrid:
             "modules": []
         }
         
-        for module_number in sorted(projections.keys()):
-            rows = projections[module_number]
+        for module_id in sorted(projections.keys()):
+            rows = projections[module_id]
             module_data = {
-                "module_number": module_number,
+                "module_id": module_id,
                 "rows": []
             }
             

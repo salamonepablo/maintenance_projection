@@ -84,7 +84,7 @@ class Command(BaseCommand):
         # Determinar módulos a procesar
         if options['module']:
             try:
-                modules = [FleetModule.objects.get(module_number=options['module'])]
+                modules = [FleetModule.objects.get(id=options['module'])]
                 if options['verbose']:
                     self.stdout.write(f"Procesando módulo {options['module']}")
             except FleetModule.DoesNotExist:
@@ -92,8 +92,8 @@ class Command(BaseCommand):
         
         elif options['all']:
             modules = list(
-                FleetModule.objects.exclude(module_number__in=[47, 67])
-                .order_by('module_number')
+                FleetModule.objects.exclude(id__in=[47, 67])
+                .order_by('id')
             )
             if options['verbose']:
                 self.stdout.write(f"Procesando {len(modules)} módulos")
@@ -120,7 +120,7 @@ class Command(BaseCommand):
                     modules[0],
                     months_ahead=months
                 )
-                projections = {modules[0].module_number: rows}
+                projections = {modules[0].id: rows}
             else:
                 # Proyección para múltiples módulos
                 projections = service.generate_for_all_modules(

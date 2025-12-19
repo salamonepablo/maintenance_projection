@@ -4,6 +4,12 @@ Todos los cambios notables de este proyecto se documentarán en este archivo.
 
 El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/) y este proyecto sigue [Versionado Semántico](https://semver.org/lang/es/).
 
+## [0.4.2] - 2025-12-18
+### Corregido
+- Servicio de grilla actualizado para usar campos reales (`fleet_module`, `profile.code`, `event_date`, `odometer_km`) y lectura de odómetro por `reading_date`.
+- Ajustes en vistas, plantilla y exportador para operar con `FleetModule.id` en filtros, orden y exportaciones.
+- Mapeo consistente entre códigos de grilla `DA` y perfil `DE` para intervenciones decanuales.
+
 ## [0.1.0] - 2024-12-11
 ### Añadido
 - Modelos iniciales de Django para módulos de flota, perfiles y eventos de mantenimiento, y registros de odómetro.

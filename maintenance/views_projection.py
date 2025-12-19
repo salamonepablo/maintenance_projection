@@ -39,8 +39,8 @@ def projection_view(request: HttpRequest) -> HttpResponse:
     
     # Obtener módulos activos (excluir 47 y 67 que están fuera de servicio)
     modules = FleetModule.objects.exclude(
-        module_number__in=[47, 67]
-    ).order_by('module_number')
+        id__in=[47, 67]
+    ).order_by('id')
     
     # Generar proyecciones
     grid_service = MaintenanceProjectionGrid(monthly_km=monthly_km)
@@ -103,8 +103,8 @@ def projection_export_excel(request: HttpRequest) -> HttpResponse:
     
     # Obtener módulos activos
     modules = FleetModule.objects.exclude(
-        module_number__in=[47, 67]
-    ).order_by('module_number')
+        id__in=[47, 67]
+    ).order_by('id')
     
     # Generar proyecciones
     grid_service = MaintenanceProjectionGrid(monthly_km=monthly_km)
@@ -197,8 +197,8 @@ def projection_api(request: HttpRequest) -> HttpResponse:
     
     # Obtener módulos activos
     modules = FleetModule.objects.exclude(
-        module_number__in=[47, 67]
-    ).order_by('module_number')
+        id__in=[47, 67]
+    ).order_by('id')
     
     # Generar proyecciones
     grid_service = MaintenanceProjectionGrid(monthly_km=monthly_km)
