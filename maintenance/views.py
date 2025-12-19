@@ -22,6 +22,9 @@ def projection_view(request: HttpRequest) -> HttpResponse:
     Vista principal de proyección de mantenimiento.
     Muestra grilla HTML con proyección mes a mes.
     """
+    if request.GET.get("export") == "excel":
+        return projection_export_excel(request)
+
     # Obtener parámetros de query string
     try:
         months_ahead = int(request.GET.get('months', 24))
@@ -253,6 +256,9 @@ def projection_view(request: HttpRequest) -> HttpResponse:
     Vista principal de proyección de mantenimiento.
     Muestra grilla HTML con proyección mes a mes.
     """
+    if request.GET.get("export") == "excel":
+        return projection_export_excel(request)
+
     # Obtener parámetros de query string
     try:
         months_ahead = int(request.GET.get('months', 24))
