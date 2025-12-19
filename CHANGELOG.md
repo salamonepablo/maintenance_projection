@@ -36,6 +36,10 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/
 ### Corregido
 - Enlace de exportación en la plantilla de proyección apuntando a `maintenance:projection_export` con parámetros preservados.
 
+## [0.4.2] - 2025-02-14
+### Añadido
+- Dependencia `openpyxl` para soportar la exportación a Excel desde el comando de proyección.
+
 ## [0.4.1] - 2025-12-17
 ### Corregido
 - Comando `import_legacy_data` actualizado para soportar formato real de CSV exportado por SIMAF.
