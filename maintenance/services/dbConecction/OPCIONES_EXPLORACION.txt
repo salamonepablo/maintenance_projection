@@ -1,0 +1,187 @@
+╔═══════════════════════════════════════════════════════════════════╗
+║           3 FORMAS DE VER TU ACCESS Y DECIDIR QUÉ USAR           ║
+╚═══════════════════════════════════════════════════════════════════╝
+
+
+📍 TU PEDIDO
+═══════════════════════════════════════════════════════════════════
+
+"Necesito entrar al Access (aunque sea solo lectura) y yo te digo 
+qué tablas/consultas tomar, porque desde el frontend veo cosas distintas"
+
+✓ Perfecto - Te doy 3 opciones para explorar
+
+
+OPCIÓN 1: ABRIR ACCESS DIRECTAMENTE (Recomendado)
+═══════════════════════════════════════════════════════════════════
+
+Pasos:
+1. Cerrar el frontend si está abierto
+2. Abrir Microsoft Access
+3. Archivo → Abrir
+4. Ruta: G:\Material Rodante\1-Servicio Eléctrico\DB\
+         Base de Datos Mantenimiento\DB_CCEE_Mantenimiento 1.0.accdb
+5. Click en FLECHA junto a "Abrir" → "Abrir como solo lectura"
+6. Contraseña: 0733
+
+Una vez adentro:
+→ Click en "Consultas" en el panel izquierdo
+→ Verás todas las queries armadas
+→ Doble click en cada una para ver datos
+→ Anota cuáles tienen los datos que necesitas
+
+✓ Ventaja: Ves TODO tal cual está
+✓ Guía completa: GUIA_ACCESS.md
+
+
+OPCIÓN 2: SCRIPT PARA VER CONSULTAS
+═══════════════════════════════════════════════════════════════════
+
+Si no quieres abrir Access, ejecuta:
+
+    python ver_consultas.py
+
+Esto lista:
+→ Todas las consultas (queries) guardadas
+→ Todas las tablas
+→ Campos de cada una
+→ Cantidad de registros
+
+Genera: lista_consultas.txt
+
+✓ Ventaja: Rápido y sin abrir Access
+✓ Te muestra qué consultas existen
+
+
+OPCIÓN 3: SCRIPT PARA PROBAR CONSULTAS
+═══════════════════════════════════════════════════════════════════
+
+Para ver datos de una consulta específica:
+
+    python ejecutar_consulta.py "nombre_consulta"
+
+Ejemplos:
+    python ejecutar_consulta.py "qry_MantenimientosCSR"
+    python ejecutar_consulta.py "TblGeneral"
+    python ejecutar_consulta.py "SELECT * FROM [02_Módulos]"
+
+Muestra:
+→ Primeras 10 filas de datos
+→ Todas las columnas
+→ Total de registros
+
+✓ Ventaja: Pruebas rápidas sin abrir Access
+
+
+═══════════════════════════════════════════════════════════════════
+
+🎯 WORKFLOW RECOMENDADO
+═══════════════════════════════════════════════════════════════════
+
+PASO 1: Ver qué consultas hay
+    → python ver_consultas.py
+    → O abrir Access y click en "Consultas"
+
+PASO 2: Probar consultas que parezcan útiles
+    → python ejecutar_consulta.py "nombre_que_te_interese"
+    → O doble click en Access
+
+PASO 3: Identificar las correctas
+    → Buscar las que tengan:
+      • Módulos CSR (M01-M86)
+      • Eventos de mantenimiento con ciclos (IQ, B, A, etc.)
+      • Lecturas periódicas de kilometraje
+
+PASO 4: Compartirme
+    → Nombres de las consultas a usar
+    → Capturas o descripción de qué tienen
+    → Ejemplos de datos
+
+
+═══════════════════════════════════════════════════════════════════
+
+📋 QUÉ BUSCAR ESPECÍFICAMENTE
+═══════════════════════════════════════════════════════════════════
+
+CONSULTA 1: MÓDULOS CSR
+Debe tener:
+  ✓ Identificador de módulo (M01, M02... o similar)
+  ✓ Tipo de módulo (Cuádrupla/Tripla)
+  ✓ Estado (Activo/Inactivo)
+
+Nombres posibles:
+  • qry_ModulosCSR
+  • qry_Modulos_Activos
+  • 02_Módulos (tabla base)
+
+CONSULTA 2: MANTENIMIENTOS/CICLOS
+Debe tener:
+  ✓ Módulo
+  ✓ Fecha del mantenimiento
+  ✓ Tipo de ciclo (IQ, B, A, BI, P, DE)
+  ✓ Kilometraje al momento
+
+Nombres posibles:
+  • qry_MantenimientosCSR
+  • qry_InspeccionesCSR
+  • qry_CiclosMantenimiento
+  • TblGeneral (tabla base)
+
+CONSULTA 3: LECTURAS DE KILOMETRAJE
+Debe tener:
+  ✓ Módulo
+  ✓ Fecha de lectura
+  ✓ Kilometraje leído
+
+Nombres posibles:
+  • qry_KilometrajesCSR
+  • qry_LecturasKm
+  • 32_Lubricación_Pestaña (tabla base)
+
+
+═══════════════════════════════════════════════════════════════════
+
+💬 FORMATO DE RESPUESTA
+═══════════════════════════════════════════════════════════════════
+
+Cuando encuentres las correctas, comparte algo así:
+
+MÓDULOS:
+  Nombre: qry_ModulosCSR
+  Campos: Modulo, Tipo, Estado, KmActual
+  Ejemplo: M01, Cuádrupla, Activo, 1250000
+
+MANTENIMIENTOS:
+  Nombre: qry_MantenimientosHistorico
+  Campos: Modulo, Fecha, TipoCiclo, Kilometraje
+  Ejemplo: M01, 15/12/2024, IQ, 1250000
+
+KILOMETRAJES:
+  Nombre: qry_LecturasOdometro
+  Campos: Modulo, Fecha, Lectura
+  Ejemplo: M01, 01/12/2024, 1245000
+
+O simplemente:
+  "Usa qry_MantenimientosCSR para todo, tiene módulo + fecha + km + tipo"
+
+
+═══════════════════════════════════════════════════════════════════
+
+📁 ARCHIVOS DISPONIBLES
+═══════════════════════════════════════════════════════════════════
+
+✓ GUIA_ACCESS.md          → Guía completa para abrir Access
+✓ ver_consultas.py        → Listar todas las consultas
+✓ ejecutar_consulta.py    → Probar consultas específicas
+
+
+═══════════════════════════════════════════════════════════════════
+
+🚀 SIGUIENTE PASO
+═══════════════════════════════════════════════════════════════════
+
+Tú exploras → Me dices qué usar → Yo adapto el código
+
+Simple, directo, sin vueltas.
+
+═══════════════════════════════════════════════════════════════════

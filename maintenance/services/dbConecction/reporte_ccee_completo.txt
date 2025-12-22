@@ -1,0 +1,1385 @@
+================================================================================
+REPORTE DE ESTRUCTURA - BASE CCEE MANTENIMIENTO
+================================================================================
+Fecha: 19/12/2025 21:55:57
+Tablas: 29
+================================================================================
+
+================================================================================
+📋 00_ClaseVehículo
+================================================================================
+Registros: 6
+
+ESTRUCTURA:
+Campo                               Tipo                 Tamaño     Nulo
+----------------------------------- -------------------- ---------- -----
+Id_Clase_Vehículo                   COUNTER              10         No
+Clase_Vehículo                      VARCHAR              255        Sí
+Tipo_MR                             VARCHAR              255        Sí
+Marca_MR                            VARCHAR              255        Sí
+Modelo_MR                           VARCHAR              255        Sí
+Línea                               VARCHAR              255        Sí
+
+DATOS DE EJEMPLO (primeras 3 filas):
+
+Fila 1:
+   Id_Clase_Vehículo: 1
+   Clase_Vehículo: H
+   Tipo_MR: COCHE ELECTRICO
+   Marca_MR: HÍBRIDO
+   Modelo_MR: NULL
+   Línea: ROCA
+
+Fila 2:
+   Id_Clase_Vehículo: 2
+   Clase_Vehículo: T
+   Tipo_MR: COCHE ELECTRICO
+   Marca_MR: TOSHIBA
+   Modelo_MR: NULL
+   Línea: ROCA
+
+Fila 3:
+   Id_Clase_Vehículo: 3
+   Clase_Vehículo: C
+   Tipo_MR: COCHE ELECTRICO
+   Marca_MR: CSR
+   Modelo_MR: NULL
+   Línea: ROCA
+
+
+================================================================================
+📋 01_Coches
+================================================================================
+Registros: 392
+
+ESTRUCTURA:
+Campo                               Tipo                 Tamaño     Nulo
+----------------------------------- -------------------- ---------- -----
+Id_Coche                            COUNTER              10         No
+Coche                               VARCHAR              255        Sí
+Ubicación                           VARCHAR              255        Sí
+Descripción                         VARCHAR              255        Sí
+ClaseVehículo                       VARCHAR              255        Sí
+Posición                            VARCHAR              255        Sí
+
+DATOS DE EJEMPLO (primeras 3 filas):
+
+Fila 1:
+   Id_Coche: 1
+   Coche: 5098
+   Ubicación: MC2
+   Descripción: Motriz Intermedio
+   ClaseVehículo: 3
+   Posición: 4
+
+Fila 2:
+   Id_Coche: 2
+   Coche: 5099
+   Ubicación: MC1
+   Descripción: Motriz Cabecera
+   ClaseVehículo: 3
+   Posición: 1
+
+Fila 3:
+   Id_Coche: 3
+   Coche: 5100
+   Ubicación: MC2
+   Descripción: Motriz Intermedio
+   ClaseVehículo: 3
+   Posición: 4
+
+
+================================================================================
+📋 01_Parte_Diario_Circulación
+================================================================================
+Registros: 1,785
+
+ESTRUCTURA:
+Campo                               Tipo                 Tamaño     Nulo
+----------------------------------- -------------------- ---------- -----
+Id_Parte                            COUNTER              10         No
+Fecha                               DATETIME             19         Sí
+Tren                                INTEGER              10         Sí
+Causa                               VARCHAR              255        Sí
+Justificación                       LONGCHAR             1073741823 Sí
+CT                                  INTEGER              10         Sí
+CP                                  INTEGER              10         Sí
+AT                                  INTEGER              10         Sí
+Pedido_Cambio_Código                VARCHAR              255        Sí
+Nueva_Causa                         VARCHAR              255        Sí
+Ticket                              INTEGER              10         Sí
+OT_Simaf                            VARCHAR              255        Sí
+Mes_Análisis                        SMALLINT             5          Sí
+
+DATOS DE EJEMPLO (primeras 3 filas):
+
+Fila 1:
+   Id_Parte: 793
+   Fecha: 06/08/2023 00:00
+   Tren: 1162
+   Causa: 2070
+   Justificación: Demoró en estación Temperley por falla de tablero de CAB1...
+   CT: 0
+   CP: 0
+   AT: 1
+   Pedido_Cambio_Código: SI
+   Nueva_Causa: NULL
+   Ticket: 9068
+   OT_Simaf: NULL
+   Mes_Análisis: 8
+
+Fila 2:
+   Id_Parte: 794
+   Fecha: 08/08/2023 00:00
+   Tren: 5640
+   Causa: 2070
+   Justificación: Demoró en estación Temperley por falta de presión de aire...
+   CT: 0
+   CP: 0
+   AT: 1
+   Pedido_Cambio_Código: SI
+   Nueva_Causa: NULL
+   Ticket: 9081
+   OT_Simaf: NULL
+   Mes_Análisis: 8
+
+Fila 3:
+   Id_Parte: 795
+   Fecha: 12/08/2023 00:00
+   Tren: 1091
+   Causa: 2070
+   Justificación: Demoró en estación Temperley por falla de botonera, inter...
+   CT: 2
+   CP: 0
+   AT: 2
+   Pedido_Cambio_Código: SI
+   Nueva_Causa: NULL
+   Ticket: 0
+   OT_Simaf: NULL
+   Mes_Análisis: 8
+
+
+================================================================================
+📋 02_Análisis_Fallas
+================================================================================
+Registros: 1,795
+
+ESTRUCTURA:
+Campo                               Tipo                 Tamaño     Nulo
+----------------------------------- -------------------- ---------- -----
+Id_Analisis_Falla                   INTEGER              10         Sí
+Cabina                              VARCHAR              255        Sí
+Módulo                              VARCHAR              255        Sí
+Coche                               VARCHAR              255        Sí
+Observaciones                       LONGCHAR             1073741823 Sí
+Resolución                          VARCHAR              255        Sí
+Tipo_Evento                         VARCHAR              255        Sí
+Falla_reconocida                    VARCHAR              255        Sí
+
+DATOS DE EJEMPLO (primeras 3 filas):
+
+Fila 1:
+   Id_Analisis_Falla: 1407
+   Cabina: F130
+   Módulo: M07
+   Coche: 5014
+   Observaciones: Conductor informa que al invertir cabina en BQ siente una...
+   Resolución: ACEPTADA
+   Tipo_Evento: Falla de equipo
+   Falla_reconocida: Mecánica
+
+Fila 2:
+   Id_Analisis_Falla: 1408
+   Cabina: F157
+   Módulo: NULL
+   Coche: NULL
+   Observaciones: La formación fue solicitada en tiempo y forma tanto telef...
+   Resolución: RECHAZADA
+   Tipo_Evento: Otro
+   Falla_reconocida: No-Rec
+
+Fila 3:
+   Id_Analisis_Falla: 1409
+   Cabina: F01
+   Módulo: T11
+   Coche: 4021
+   Observaciones: Conductor informa que ingresando a BQ se le aplicó el ATS...
+   Resolución: RECHAZADA
+   Tipo_Evento: Mala Operación de otra área
+   Falla_reconocida: No-Rec
+
+
+================================================================================
+📋 02_Módulos
+================================================================================
+Registros: 111
+
+ESTRUCTURA:
+Campo                               Tipo                 Tamaño     Nulo
+----------------------------------- -------------------- ---------- -----
+Id_Módul                            COUNTER              10         No
+Módulo                              VARCHAR              255        Sí
+ClaseVehículo                       INTEGER              10         Sí
+Cabina                              VARCHAR              255        Sí
+
+DATOS DE EJEMPLO (primeras 3 filas):
+
+Fila 1:
+   Id_Módul: 2
+   Módulo: T04
+   ClaseVehículo: 2
+   Cabina: B
+
+Fila 2:
+   Id_Módul: 3
+   Módulo: T06
+   ClaseVehículo: 2
+   Cabina: B
+
+Fila 3:
+   Id_Módul: 4
+   Módulo: T09
+   ClaseVehículo: 2
+   Cabina: A
+
+
+================================================================================
+📋 03_Formaciones
+================================================================================
+Registros: 65
+
+ESTRUCTURA:
+Campo                               Tipo                 Tamaño     Nulo
+----------------------------------- -------------------- ---------- -----
+Id_Formación                        COUNTER              10         No
+Formación                           VARCHAR              255        Sí
+ClaseVehículo                       VARCHAR              255        Sí
+Estado                              VARCHAR              255        Sí
+
+DATOS DE EJEMPLO (primeras 3 filas):
+
+Fila 1:
+   Id_Formación: 2
+   Formación: F01
+   ClaseVehículo: T
+   Estado: NULL
+
+Fila 2:
+   Id_Formación: 3
+   Formación: F02
+   ClaseVehículo: T
+   Estado: NULL
+
+Fila 3:
+   Id_Formación: 4
+   Formación: F03
+   ClaseVehículo: T
+   Estado: NULL
+
+
+================================================================================
+📋 03_Informe_Falla
+================================================================================
+Registros: 804
+
+ESTRUCTURA:
+Campo                               Tipo                 Tamaño     Nulo
+----------------------------------- -------------------- ---------- -----
+Id_Informe_Falla                    INTEGER              10         Sí
+Número_Informe                      VARCHAR              243        Sí
+Descripción_Falla_Breve             VARCHAR              255        Sí
+Medida_Correctiva                   LONGCHAR             1073741823 Sí
+Análisis_Falla                      LONGCHAR             1073741823 Sí
+Medida_Preventiva                   LONGCHAR             1073741823 Sí
+Antecedente                         LONGCHAR             1073741823 Sí
+Materiales_Relacionados             LONGCHAR             1073741823 Sí
+Imagen1                             LONGCHAR             1073741823 Sí
+Imagen2                             LONGCHAR             1073741823 Sí
+Alistamiento                        VARCHAR              255        Sí
+Intervención Liviana                VARCHAR              255        Sí
+Intervención Mediana                VARCHAR              255        Sí
+Intervención Pesada                 VARCHAR              255        Sí
+Número                              COUNTER              10         No
+
+DATOS DE EJEMPLO (primeras 3 filas):
+
+Fila 1:
+   Id_Informe_Falla: 797
+   Número_Informe: INF-FA-369
+   Descripción_Falla_Breve: Fuelle con tela suelta
+   Medida_Correctiva: Se ingresa formacion, se revisa estado de fuelle y se obs...
+   Análisis_Falla: El movimiento constante que generan los fuelles ocaciona ...
+   Medida_Preventiva: En las inspecciones quincenales y bimestrales se realiza ...
+   Antecedente: SIN NOVEDADES
+   Materiales_Relacionados: SIN NOVEDADES
+   Imagen1: Fuelle CSR.jpg
+   Imagen2: 
+   Alistamiento: 12/08/2023
+   Intervención Liviana: 29/07/2023
+   Intervención Mediana: 05/02/2023
+   Intervención Pesada: 30/12/2023
+   Número: 369
+
+Fila 2:
+   Id_Informe_Falla: 803
+   Número_Informe: INF-FA-370
+   Descripción_Falla_Breve: Falla LPB - Rotura traba escobillas
+   Medida_Correctiva: Se cambia brazo completo en PC.
+   Análisis_Falla: Por rotura (fatiga) del material
+   Medida_Preventiva: En todas las inspecciones (CHL -SEM - MEN) se corrobora e...
+   Antecedente: SIN NOVEDADES
+   Materiales_Relacionados: SIN NOVEDADES
+   Imagen1: LPB.jpg
+   Imagen2: 
+   Alistamiento: 11/08/2023
+   Intervención Liviana: 28/06/2023
+   Intervención Mediana: 12/05/2022
+   Intervención Pesada: 12/05/2022
+   Número: 370
+
+Fila 3:
+   Id_Informe_Falla: 810
+   Número_Informe: INF-FA-372
+   Descripción_Falla_Breve: Falla en ENGA - AFLO
+   Medida_Correctiva: Se realiza cambio de acrílico protector de seguridad en E...
+   Análisis_Falla: Teniendo acrilico protector roto genero que la valvula gi...
+   Medida_Preventiva: En inspecciones Mensuales se realiza control de acrilicos...
+   Antecedente: SIN NOVEDADES
+   Materiales_Relacionados: SIN NOVEDADES
+   Imagen1: Acrilico ENGA -AFLO.jpg
+   Imagen2: 
+   Alistamiento: 12/08/2023
+   Intervención Liviana: 15/06/2023
+   Intervención Mediana: 26/02/2021
+   Intervención Pesada: 24/05/2017
+   Número: 372
+
+
+================================================================================
+📋 05_Averías
+================================================================================
+Registros: 15,491
+
+ESTRUCTURA:
+Campo                               Tipo                 Tamaño     Nulo
+----------------------------------- -------------------- ---------- -----
+Id_Ticket                           COUNTER              10         No
+Ticket                              INTEGER              10         Sí
+Fecha                               DATETIME             19         Sí
+Formación                           VARCHAR              255        Sí
+Módulo                              VARCHAR              255        Sí
+Coche                               VARCHAR              255        Sí
+Lugar                               VARCHAR              255        Sí
+Conductor                           VARCHAR              255        Sí
+Req_Ingreso                         VARCHAR              255        Sí
+Avería_Denunciada                   LONGCHAR             1073741823 Sí
+Hora_Aviso                          DATETIME             19         Sí
+Trabajo_Guardia                     LONGCHAR             1073741823 Sí
+Hora_Intervención                   DATETIME             19         Sí
+Hora_Entrega                        DATETIME             19         Sí
+OT_Asignada                         VARCHAR              255        Sí
+Sistema                             VARCHAR              255        Sí
+Órgano                              VARCHAR              255        Sí
+
+DATOS DE EJEMPLO (primeras 3 filas):
+
+Fila 1:
+   Id_Ticket: 13272
+   Ticket: 13269
+   Fecha: 28/02/2025 00:00
+   Formación: F04
+   Módulo: T52
+   Coche: 4104
+   Lugar: DOA
+   Conductor: NULL
+   Req_Ingreso: Programado
+   Avería_Denunciada: Conductor de aire en 26b1
+   Hora_Aviso: 30/12/1899 13:00
+   Trabajo_Guardia: A la llegada a plaza se revisa encontrando que la perdida...
+   Hora_Intervención: 30/12/1899 13:25
+   Hora_Entrega: 30/12/1899 13:30
+   OT_Asignada: 86/02/Avería
+   Sistema: Freno/Neumática
+   Órgano: Pérdida de aire/presión
+
+Fila 2:
+   Id_Ticket: 13273
+   Ticket: 13268
+   Fecha: 28/02/2025 00:00
+   Formación: F123
+   Módulo: 09
+   Coche: 5017
+   Lugar: K5
+   Conductor: NULL
+   Req_Ingreso: NO
+   Avería_Denunciada: conductor al salir de plaza le  aparecio  la  falla de co...
+   Hora_Aviso: 30/12/1899 08:20
+   Trabajo_Guardia:  lo espera en estacion de lomas de zamora para intervenir...
+   Hora_Intervención: 30/12/1899 08:40
+   Hora_Entrega: 30/12/1899 08:42
+   OT_Asignada: NULL
+   Sistema: Eléctrica
+   Órgano: Comunicación
+
+Fila 3:
+   Id_Ticket: 13274
+   Ticket: 13267
+   Fecha: 28/02/2025 00:00
+   Formación: F127
+   Módulo: 14
+   Coche: 5028
+   Lugar: DLL
+   Conductor: NULL
+   Req_Ingreso: Programado
+   Avería_Denunciada: Conductor le informa a Control que llegando a Burzaco se ...
+   Hora_Aviso: 30/12/1899 06:38
+   Trabajo_Guardia: se le consulta al conductor si la falla se normalizó sola...
+   Hora_Intervención: 30/12/1899 06:42
+   Hora_Entrega: 30/12/1899 06:42
+   OT_Asignada: NULL
+   Sistema: Eléctrica
+   Órgano: Desconexión de Módulo
+
+
+================================================================================
+📋 05_Averías_Anexar
+================================================================================
+Registros: 0
+
+ESTRUCTURA:
+Campo                               Tipo                 Tamaño     Nulo
+----------------------------------- -------------------- ---------- -----
+Id_Avería_Anexar                    COUNTER              10         No
+Ticket_Ane                          INTEGER              10         Sí
+Fecha_Ane                           DATETIME             19         Sí
+Formación_Ane                       VARCHAR              255        Sí
+Módulo_Ane                          VARCHAR              255        Sí
+Coche_Ane                           VARCHAR              255        Sí
+Lugar_Ane                           VARCHAR              255        Sí
+Conductor_Ane                       VARCHAR              255        Sí
+Req_Ingreso_Ane                     VARCHAR              255        Sí
+Avería_Denunciada_Ane               LONGCHAR             1073741823 Sí
+Hora_Aviso_Ane                      DATETIME             19         Sí
+Trabajo_Guardia_Ane                 LONGCHAR             1073741823 Sí
+Hora_Intervención_Ane               DATETIME             19         Sí
+Hora_Entrega_Ane                    DATETIME             19         Sí
+OT_Asignada_Ane                     VARCHAR              255        Sí
+
+DATOS DE EJEMPLO (primeras 3 filas):
+
+
+================================================================================
+📋 08_DistHorasHombre
+================================================================================
+Registros: 118,282
+
+ESTRUCTURA:
+Campo                               Tipo                 Tamaño     Nulo
+----------------------------------- -------------------- ---------- -----
+Legajo                              INTEGER              10         Sí
+Apellidos                           VARCHAR              255        Sí
+Nombre                              VARCHAR              255        Sí
+Fecha                               DATETIME             19         Sí
+TipoTrabajo                         VARCHAR              255        Sí
+TipoTarea                           VARCHAR              255        Sí
+Unidad                              VARCHAR              255        Sí
+Subfijo                             VARCHAR              255        Sí
+Programado                          VARCHAR              255        Sí
+Asignado                            INTEGER              10         Sí
+
+DATOS DE EJEMPLO (primeras 3 filas):
+
+Fila 1:
+   Legajo: 1511
+   Apellidos: Drago
+   Nombre: Roberto Fabian
+   Fecha: 01/11/2024 00:00
+   TipoTrabajo: Trabajos de Taller
+   TipoTarea: Tareas de Orden y Limpieza
+   Unidad: DLL
+   Subfijo: Mant
+   Programado: No Programado
+   Asignado: 1
+
+Fila 2:
+   Legajo: 2335
+   Apellidos: Romeo
+   Nombre: Gabriel
+   Fecha: 01/11/2024 00:00
+   TipoTrabajo: Inspección Semanal
+   TipoTarea: Equipos sobre techo
+   Unidad: T22
+   Subfijo: IS
+   Programado: Programado
+   Asignado: 1
+
+Fila 3:
+   Legajo: 2335
+   Apellidos: Romeo
+   Nombre: Gabriel
+   Fecha: 01/11/2024 00:00
+   TipoTrabajo: Inspección Semanal
+   TipoTarea: Puertas
+   Unidad: T22
+   Subfijo: IS
+   Programado: Programado
+   Asignado: 1
+
+
+================================================================================
+📋 08_HorasHombre
+================================================================================
+Registros: 11,515
+
+ESTRUCTURA:
+Campo                               Tipo                 Tamaño     Nulo
+----------------------------------- -------------------- ---------- -----
+Legajo                              INTEGER              10         Sí
+Apellidos                           VARCHAR              255        Sí
+Nombre                              VARCHAR              255        Sí
+Fecha                               DATETIME             19         Sí
+TipoTrabajo                         VARCHAR              255        Sí
+TipoTarea                           VARCHAR              255        Sí
+Unidad                              VARCHAR              255        Sí
+Subfijo                             VARCHAR              255        Sí
+Programado                          VARCHAR              255        Sí
+Horas                               INTEGER              10         Sí
+Sector                              VARCHAR              255        Sí
+
+DATOS DE EJEMPLO (primeras 3 filas):
+
+Fila 1:
+   Legajo: 17162
+   Apellidos: Santa Cruz
+   Nombre: Matias
+   Fecha: 01/11/2024 00:00
+   TipoTrabajo: Inspección Bimestral
+   TipoTarea: Cabina de conducción
+   Unidad: 10
+   Subfijo: IBi
+   Programado: Programado
+   Horas: 1
+   Sector: Mant. LL
+
+Fila 2:
+   Legajo: 17162
+   Apellidos: Santa Cruz
+   Nombre: Matias
+   Fecha: 01/11/2024 00:00
+   TipoTrabajo: Inspección Bimestral
+   TipoTarea: Eléctrica bajo piso
+   Unidad: 10
+   Subfijo: IBi
+   Programado: Programado
+   Horas: 1
+   Sector: Mant. LL
+
+Fila 3:
+   Legajo: 17162
+   Apellidos: Santa Cruz
+   Nombre: Matias
+   Fecha: 01/11/2024 00:00
+   TipoTrabajo: Inspección Bimestral
+   TipoTarea: Bogie
+   Unidad: 10
+   Subfijo: IBi
+   Programado: Programado
+   Horas: 1
+   Sector: Mant. LL
+
+
+================================================================================
+📋 08_Sectores
+================================================================================
+Registros: 11
+
+ESTRUCTURA:
+Campo                               Tipo                 Tamaño     Nulo
+----------------------------------- -------------------- ---------- -----
+Sector                              VARCHAR              255        Sí
+Área                                VARCHAR              255        Sí
+
+DATOS DE EJEMPLO (primeras 3 filas):
+
+Fila 1:
+   Sector: Mantenimiento DLL
+   Área: DLL
+
+Fila 2:
+   Sector: Laboratorio DLL
+   Área: DLL
+
+Fila 3:
+   Sector: Mantenimiento DOA
+   Área: DOA
+
+
+================================================================================
+📋 08_TipoUnidades
+================================================================================
+Registros: 116
+
+ESTRUCTURA:
+Campo                               Tipo                 Tamaño     Nulo
+----------------------------------- -------------------- ---------- -----
+Unidad                              VARCHAR              255        Sí
+Tipo_Unidad                         VARCHAR              255        Sí
+
+DATOS DE EJEMPLO (primeras 3 filas):
+
+Fila 1:
+   Unidad: 01
+   Tipo_Unidad: CSR
+
+Fila 2:
+   Unidad: 02
+   Tipo_Unidad: CSR
+
+Fila 3:
+   Unidad: 03
+   Tipo_Unidad: CSR
+
+
+================================================================================
+📋 10_Tipo_Evento
+================================================================================
+Registros: 14
+
+ESTRUCTURA:
+Campo                               Tipo                 Tamaño     Nulo
+----------------------------------- -------------------- ---------- -----
+Id_Tipo _Evento                     COUNTER              10         No
+Tipo_Evento                         VARCHAR              255        Sí
+Falla                               VARCHAR              255        Sí
+Resolución                          VARCHAR              255        Sí
+
+DATOS DE EJEMPLO (primeras 3 filas):
+
+Fila 1:
+   Id_Tipo _Evento: 1
+   Tipo_Evento: Sin registro evento
+   Falla: No-Rec
+   Resolución: RECHAZADA
+
+Fila 2:
+   Id_Tipo _Evento: 2
+   Tipo_Evento: Vandalismo
+   Falla: No-Rec
+   Resolución: RECHAZADA
+
+Fila 3:
+   Id_Tipo _Evento: 3
+   Tipo_Evento: Mala Operación de otra área
+   Falla: No-Rec
+   Resolución: RECHAZADA
+
+
+================================================================================
+📋 11_CambioCoches
+================================================================================
+Registros: 417
+
+ESTRUCTURA:
+Campo                               Tipo                 Tamaño     Nulo
+----------------------------------- -------------------- ---------- -----
+Id_CambCoche                        COUNTER              10         No
+Coche                               VARCHAR              255        Sí
+Módulo                              VARCHAR              255        Sí
+Fecha                               DATETIME             19         Sí
+Descripción                         VARCHAR              255        Sí
+
+DATOS DE EJEMPLO (primeras 3 filas):
+
+Fila 1:
+   Id_CambCoche: 3
+   Coche: 4813
+   Módulo: NULL
+   Fecha: 18/12/2015 00:00
+   Descripción: Remolque Prima
+
+Fila 2:
+   Id_CambCoche: 4
+   Coche: 4819
+   Módulo: NULL
+   Fecha: 12/02/2018 00:00
+   Descripción: Remolque Prima
+
+Fila 3:
+   Id_CambCoche: 5
+   Coche: 4007
+   Módulo: T04
+   Fecha: 01/08/2016 00:00
+   Descripción: Motriz Cabecera
+
+
+================================================================================
+📋 11_Sistema_Organos
+================================================================================
+Registros: 146
+
+ESTRUCTURA:
+Campo                               Tipo                 Tamaño     Nulo
+----------------------------------- -------------------- ---------- -----
+Id_Sistema                          COUNTER              10         No
+Sistema                             VARCHAR              255        Sí
+Órganos                             VARCHAR              255        Sí
+Clase_Vehículo                      INTEGER              10         Sí
+
+DATOS DE EJEMPLO (primeras 3 filas):
+
+Fila 1:
+   Id_Sistema: 2
+   Sistema: Carrocería
+   Órganos: Miriñaque
+   Clase_Vehículo: 1
+
+Fila 2:
+   Id_Sistema: 3
+   Sistema: Carrocería
+   Órganos: Otros
+   Clase_Vehículo: 1
+
+Fila 3:
+   Id_Sistema: 4
+   Sistema: Carrocería
+   Órganos: Parabrisas
+   Clase_Vehículo: 1
+
+
+================================================================================
+📋 12_CambioMódulos
+================================================================================
+Registros: 388
+
+ESTRUCTURA:
+Campo                               Tipo                 Tamaño     Nulo
+----------------------------------- -------------------- ---------- -----
+Id_CambMódulo                       COUNTER              10         No
+Formación                           VARCHAR              50         Sí
+Módulo                              VARCHAR              255        Sí
+Cabina                              VARCHAR              255        Sí
+Fecha                               DATETIME             19         Sí
+
+DATOS DE EJEMPLO (primeras 3 filas):
+
+Fila 1:
+   Id_CambMódulo: 1
+   Formación: F08
+   Módulo: T43
+   Cabina: A
+   Fecha: 31/08/2015 00:00
+
+Fila 2:
+   Id_CambMódulo: 2
+   Formación: F10
+   Módulo: T39
+   Cabina: B
+   Fecha: 31/08/2015 00:00
+
+Fila 3:
+   Id_CambMódulo: 3
+   Formación: F12
+   Módulo: T29
+   Cabina: B
+   Fecha: 31/08/2015 00:00
+
+
+================================================================================
+📋 31_Eventos
+================================================================================
+Registros: 109
+
+ESTRUCTURA:
+Campo                               Tipo                 Tamaño     Nulo
+----------------------------------- -------------------- ---------- -----
+IDMódulo                            INTEGER              10         Sí
+Módulo                              VARCHAR              255        Sí
+Desde                               DATETIME             19         Sí
+Hasta                               DATETIME             19         Sí
+Tarea                               VARCHAR              255        Sí
+Depósito                            VARCHAR              255        Sí
+Observaciones                       VARCHAR              255        Sí
+Usuario                             VARCHAR              255        Sí
+HastaAnt                            DATETIME             19         Sí
+DíasPerdidaDatos                    DOUBLE               53         Sí
+
+DATOS DE EJEMPLO (primeras 3 filas):
+
+Fila 1:
+   IDMódulo: 1001
+   Módulo: M01
+   Desde: 10/12/2025 18:36
+   Hasta: 17/12/2025 20:39
+   Tarea: Eventos CSR
+   Depósito: DK5
+   Observaciones: NULL
+   Usuario: MCARRIZO
+   HastaAnt: 16/12/2025 13:31
+   DíasPerdidaDatos: -5.788194444445253
+
+Fila 2:
+   IDMódulo: 1002
+   Módulo: M02
+   Desde: 11/12/2025 18:39
+   Hasta: 17/12/2025 01:11
+   Tarea: Eventos CSR
+   Depósito: DLL
+   Observaciones: NULL
+   Usuario: LABDLL
+   HastaAnt: 12/12/2025 20:29
+   DíasPerdidaDatos: -1.0763888888905058
+
+Fila 3:
+   IDMódulo: 1003
+   Módulo: M03
+   Desde: 11/12/2025 00:20
+   Hasta: 15/12/2025 22:33
+   Tarea: Eventos CSR
+   Depósito: DK5
+   Observaciones: NULL
+   Usuario: MCARRIZO
+   HastaAnt: 13/12/2025 01:54
+   DíasPerdidaDatos: -2.0652777777795563
+
+
+================================================================================
+📋 31_Eventos_Registros
+================================================================================
+Registros: 28,661
+
+ESTRUCTURA:
+Campo                               Tipo                 Tamaño     Nulo
+----------------------------------- -------------------- ---------- -----
+ID                                  COUNTER              10         No
+Módulo                              VARCHAR              255        Sí
+Desde                               DATETIME             19         Sí
+Hasta                               DATETIME             19         Sí
+Tarea                               VARCHAR              255        Sí
+Observaciones                       VARCHAR              255        Sí
+Usuario                             VARCHAR              255        Sí
+Depósito                            VARCHAR              255        Sí
+HastaAnt                            DATETIME             19         Sí
+DíasPerdidaDatos                    DOUBLE               53         Sí
+Registrado                          DATETIME             19         Sí
+
+DATOS DE EJEMPLO (primeras 3 filas):
+
+Fila 1:
+   ID: 21370
+   Módulo: M06
+   Desde: NULL
+   Hasta: 13/01/2025 00:00
+   Tarea: Eventos CSR
+   Observaciones: NULL
+   Usuario: JLESCANO
+   Depósito: DOA
+   HastaAnt: 09/01/2025 00:00
+   DíasPerdidaDatos: NULL
+   Registrado: 13/01/2025 00:00
+
+Fila 2:
+   ID: 21371
+   Módulo: M13
+   Desde: NULL
+   Hasta: 13/01/2025 00:00
+   Tarea: Eventos CSR
+   Observaciones: NULL
+   Usuario: PSECO
+   Depósito: DOA
+   HastaAnt: 08/01/2025 00:00
+   DíasPerdidaDatos: NULL
+   Registrado: 13/01/2025 00:00
+
+Fila 3:
+   ID: 21372
+   Módulo: M18
+   Desde: NULL
+   Hasta: 13/01/2025 00:00
+   Tarea: Eventos CSR
+   Observaciones: NULL
+   Usuario: MCARRIZO
+   Depósito: DK5
+   HastaAnt: 08/01/2025 00:00
+   DíasPerdidaDatos: NULL
+   Registrado: 13/01/2025 00:00
+
+
+================================================================================
+📋 32_Lubricación_Pestaña
+================================================================================
+Registros: 2,486
+
+ESTRUCTURA:
+Campo                               Tipo                 Tamaño     Nulo
+----------------------------------- -------------------- ---------- -----
+Id_Lubricación_Pestaña              COUNTER              10         No
+Módulo                              INTEGER              10         Sí
+Fecha                               DATETIME             19         Sí
+Kilometraje                         INTEGER              10         Sí
+Observación                         VARCHAR              255        Sí
+Usuario                             VARCHAR              255        Sí
+Tarea                               VARCHAR              255        Sí
+
+DATOS DE EJEMPLO (primeras 3 filas):
+
+Fila 1:
+   Id_Lubricación_Pestaña: 1
+   Módulo: 90
+   Fecha: 28/02/2023 00:00
+   Kilometraje: 979219
+   Observación: --
+   Usuario: Egomez
+   Tarea: Lubricación Pestaña CSR
+
+Fila 2:
+   Id_Lubricación_Pestaña: 2
+   Módulo: 66
+   Fecha: 28/02/2023 00:00
+   Kilometraje: 976331
+   Observación: --
+   Usuario: Egomez
+   Tarea: Lubricación Pestaña CSR
+
+Fila 3:
+   Id_Lubricación_Pestaña: 3
+   Módulo: 84
+   Fecha: 28/02/2023 00:00
+   Kilometraje: NULL
+   Observación: --
+   Usuario: Egomez
+   Tarea: Lubricación Pestaña CSR
+
+
+================================================================================
+📋 33_Lavados
+================================================================================
+Registros: 3,143
+
+ESTRUCTURA:
+Campo                               Tipo                 Tamaño     Nulo
+----------------------------------- -------------------- ---------- -----
+Id_Lavados                          COUNTER              10         No
+Formación                           VARCHAR              255        Sí
+Fecha                               DATETIME             19         Sí
+Turno                               VARCHAR              255        Sí
+Depósito                            VARCHAR              255        Sí
+Usuario                             VARCHAR              255        Sí
+Registrado                          VARCHAR              255        Sí
+
+DATOS DE EJEMPLO (primeras 3 filas):
+
+Fila 1:
+   Id_Lavados: 191
+   Formación: F155
+   Fecha: 01/11/2023 00:00
+   Turno: N
+   Depósito: K5
+   Usuario: CCABRERA
+   Registrado: 01/11/2023 22:11:34
+
+Fila 2:
+   Id_Lavados: 192
+   Formación: F156
+   Fecha: 26/10/2023 00:00
+   Turno: M
+   Depósito: LLV
+   Usuario: MAMENDOLA
+   Registrado: 02/11/2023 01:02:09
+
+Fila 3:
+   Id_Lavados: 193
+   Formación: F11
+   Fecha: 01/11/2023 00:00
+   Turno: N
+   Depósito: LLV
+   Usuario: MAMENDOLA
+   Registrado: 02/11/2023 01:02:40
+
+
+================================================================================
+📋 40_Parte_Lab
+================================================================================
+Registros: 0
+
+ESTRUCTURA:
+Campo                               Tipo                 Tamaño     Nulo
+----------------------------------- -------------------- ---------- -----
+Id                                  COUNTER              10         No
+Fecha                               DATETIME             19         Sí
+Turno                               VARCHAR              255        Sí
+Depósito                            VARCHAR              255        Sí
+Tarea                               VARCHAR              255        Sí
+TipoTarea                           VARCHAR              255        Sí
+TipoUnidad                          VARCHAR              255        Sí
+Formación                           VARCHAR              255        Sí
+Unidad                              VARCHAR              255        Sí
+Coche                               VARCHAR              255        Sí
+NProtocolo                          VARCHAR              255        Sí
+Descripción                         LONGCHAR             1073741823 Sí
+EstadoTarea                         VARCHAR              255        Sí
+OTSimaf                             VARCHAR              255        Sí
+Supervisor                          VARCHAR              255        Sí
+Personal                            VARCHAR              255        Sí
+Novedades                           LONGCHAR             1073741823 Sí
+Materiales                          VARCHAR              255        Sí
+
+DATOS DE EJEMPLO (primeras 3 filas):
+
+
+================================================================================
+📋 TblEstado
+================================================================================
+Registros: 6
+
+ESTRUCTURA:
+Campo                               Tipo                 Tamaño     Nulo
+----------------------------------- -------------------- ---------- -----
+Id_Estado                           COUNTER              10         No
+Estado                              VARCHAR              255        Sí
+Motivo                              VARCHAR              255        Sí
+
+DATOS DE EJEMPLO (primeras 3 filas):
+
+Fila 1:
+   Id_Estado: 1
+   Estado: En Servicio
+   Motivo: Accidental
+
+Fila 2:
+   Id_Estado: 2
+   Estado: En Servicio
+   Motivo: Programado
+
+Fila 3:
+   Id_Estado: 3
+   Estado: Reserva
+   Motivo: Reparado
+
+
+================================================================================
+📋 TblGeneral
+================================================================================
+Registros: 694
+
+ESTRUCTURA:
+Campo                               Tipo                 Tamaño     Nulo
+----------------------------------- -------------------- ---------- -----
+Id                                  COUNTER              10         No
+Organo                              VARCHAR              255        Sí
+Código                              VARCHAR              255        Sí
+Estado                              VARCHAR              255        Sí
+Motivo                              VARCHAR              255        Sí
+Fecha                               DATETIME             19         Sí
+Kilometraje                         INTEGER              10         Sí
+Simaf                               VARCHAR              255        Sí
+Protocolo                           VARCHAR              255        Sí
+Coche                               VARCHAR              255        Sí
+Módulo                              VARCHAR              255        Sí
+Formación                           VARCHAR              255        Sí
+Posición                            VARCHAR              255        Sí
+Descripción                         LONGCHAR             1073741823 Sí
+FechaAnterior                       DATETIME             19         Sí
+KilometrajeAnterior                 INTEGER              10         Sí
+Procedencia                         VARCHAR              255        Sí
+Usuario                             VARCHAR              255        Sí
+Ubicación                           VARCHAR              255        Sí
+KilometrajeRecorrido                INTEGER              10         Sí
+DíasEnServicio                      DOUBLE               53         Sí
+
+DATOS DE EJEMPLO (primeras 3 filas):
+
+Fila 1:
+   Id: 1
+   Organo: Válvula 26B-1
+   Código: 70-26B
+   Estado: En servicio
+   Motivo: NULL
+   Fecha: 13/08/2025 00:00
+   Kilometraje: 5235167
+   Simaf: 23869
+   Protocolo: NULL
+   Coche: 4007
+   Módulo: T04
+   Formación: F11
+   Posición: única
+   Descripción: Rotado en inspección MEN. 
+   FechaAnterior: NULL
+   KilometrajeAnterior: NULL
+   Procedencia: NULL
+   Usuario: EGOMEZ
+   Ubicación: NULL
+   KilometrajeRecorrido: NULL
+   DíasEnServicio: NULL
+
+Fila 2:
+   Id: 2
+   Organo: Válvula 26C-E
+   Código: 4-26CE
+   Estado: En servicio
+   Motivo: Programado
+   Fecha: 15/12/2023 00:00
+   Kilometraje: 5348164
+   Simaf: 4-39456
+   Protocolo: NULL
+   Coche: 4007
+   Módulo: T04
+   Formación: F11
+   Posición: única
+   Descripción: Rotado en RG
+   FechaAnterior: NULL
+   KilometrajeAnterior: NULL
+   Procedencia: NULL
+   Usuario: EGOMEZ
+   Ubicación: NULL
+   KilometrajeRecorrido: NULL
+   DíasEnServicio: NULL
+
+Fila 3:
+   Id: 3
+   Organo: Válvula 26C-S
+   Código: 204-26CS
+   Estado: En servicio
+   Motivo: Programado
+   Fecha: 12/05/2025 00:00
+   Kilometraje: 5469794
+   Simaf: 9897
+   Protocolo: NULL
+   Coche: 4007
+   Módulo: T04
+   Formación: F11
+   Posición: única
+   Descripción: Rotado en inspección MEN. Se retiro 629-CS
+   FechaAnterior: NULL
+   KilometrajeAnterior: NULL
+   Procedencia: NULL
+   Usuario: EGOMEZ
+   Ubicación: NULL
+   KilometrajeRecorrido: NULL
+   DíasEnServicio: NULL
+
+
+================================================================================
+📋 TblPosición
+================================================================================
+Registros: 29
+
+ESTRUCTURA:
+Campo                               Tipo                 Tamaño     Nulo
+----------------------------------- -------------------- ---------- -----
+Id_Pos                              COUNTER              10         No
+Organo                              VARCHAR              255        Sí
+Posición                            VARCHAR              255        Sí
+
+DATOS DE EJEMPLO (primeras 3 filas):
+
+Fila 1:
+   Id_Pos: 24
+   Organo: Válvula U5A
+   Posición: único
+
+Fila 2:
+   Id_Pos: 25
+   Organo: Válvula VM25-1
+   Posición: único
+
+Fila 3:
+   Id_Pos: 26
+   Organo: VCB
+   Posición: único
+
+
+================================================================================
+📋 TblRegistroOGP
+================================================================================
+Registros: 691
+
+ESTRUCTURA:
+Campo                               Tipo                 Tamaño     Nulo
+----------------------------------- -------------------- ---------- -----
+ID_Organo                           COUNTER              10         No
+Organo                              VARCHAR              255        Sí
+Número                              VARCHAR              255        Sí
+Código                              VARCHAR              255        Sí
+Tipo_MR                             VARCHAR              255        Sí
+Activo                              BIT                  1          No
+Usuario                             VARCHAR              255        Sí
+
+DATOS DE EJEMPLO (primeras 3 filas):
+
+Fila 1:
+   ID_Organo: 1341
+   Organo: Válvula Detectora de Carga
+   Número: 84007
+   Código: 84007-DC
+   Tipo_MR: Toshiba
+   Activo: True
+   Usuario: NULL
+
+Fila 2:
+   ID_Organo: 1342
+   Organo: Válvula N8
+   Número: 8
+   Código: 8-N8
+   Tipo_MR: Toshiba
+   Activo: True
+   Usuario: NULL
+
+Fila 3:
+   ID_Organo: 1343
+   Organo: Válvula U5A
+   Número: 84127
+   Código: 84127-U5A
+   Tipo_MR: Toshiba
+   Activo: True
+   Usuario: NULL
+
+
+================================================================================
+📋 TblTipoOGP
+================================================================================
+Registros: 19
+
+ESTRUCTURA:
+Campo                               Tipo                 Tamaño     Nulo
+----------------------------------- -------------------- ---------- -----
+Id_Tipo                             COUNTER              10         No
+Organo                              VARCHAR              255        Sí
+Sufijo                              VARCHAR              255        Sí
+Tipo_MR                             VARCHAR              255        Sí
+
+DATOS DE EJEMPLO (primeras 3 filas):
+
+Fila 1:
+   Id_Tipo: 1
+   Organo: Amortiguador Vertical
+   Sufijo: AM
+   Tipo_MR: Toshiba
+
+Fila 2:
+   Id_Tipo: 2
+   Organo: Moto Alternador
+   Sufijo: MA
+   Tipo_MR: Toshiba
+
+Fila 3:
+   Id_Tipo: 3
+   Organo: Motor de tracción
+   Sufijo: MT
+   Tipo_MR: Toshiba
+
+
+================================================================================
+📋 Usuarios
+================================================================================
+Registros: 83
+
+ESTRUCTURA:
+Campo                               Tipo                 Tamaño     Nulo
+----------------------------------- -------------------- ---------- -----
+ID_Usuario                          COUNTER              10         No
+Nombre_Usuario                      LONGCHAR             1073741823 Sí
+Usuario                             VARCHAR              255        Sí
+Pass                                VARCHAR              255        Sí
+Admin                               BIT                  1          No
+AgregarFalla                        BIT                  1          No
+Lectura                             BIT                  1          No
+UsuariosData                        BIT                  1          No
+AgregarSeg                          BIT                  1          No
+AgregarOGP                          BIT                  1          No
+
+DATOS DE EJEMPLO (primeras 3 filas):
+
+Fila 1:
+   ID_Usuario: 1
+   Nombre_Usuario: Cordoba, Emanuel
+   Usuario: Ecordoba
+   Pass: 42603015
+   Admin: True
+   AgregarFalla: True
+   Lectura: True
+   UsuariosData: True
+   AgregarSeg: True
+   AgregarOGP: True
+
+Fila 2:
+   ID_Usuario: 2
+   Nombre_Usuario: Gomez, Estefanía
+   Usuario: Egomez
+   Pass: 1198
+   Admin: True
+   AgregarFalla: True
+   Lectura: True
+   UsuariosData: True
+   AgregarSeg: True
+   AgregarOGP: True
+
+Fila 3:
+   ID_Usuario: 3
+   Nombre_Usuario: General
+   Usuario: Lroca
+   Pass: Lroca
+   Admin: False
+   AgregarFalla: False
+   Lectura: True
+   UsuariosData: False
+   AgregarSeg: False
+   AgregarOGP: False
+
+
+================================================================================
+📋 Usuarios1
+================================================================================
+Registros: 83
+
+ESTRUCTURA:
+Campo                               Tipo                 Tamaño     Nulo
+----------------------------------- -------------------- ---------- -----
+ID_Usuario                          COUNTER              10         No
+Nombre_Usuario                      LONGCHAR             1073741823 Sí
+Usuario                             VARCHAR              255        Sí
+Pass                                VARCHAR              255        Sí
+Admin                               BIT                  1          No
+AgregarFalla                        BIT                  1          No
+Lectura                             BIT                  1          No
+UsuariosData                        BIT                  1          No
+AgregarSeg                          BIT                  1          No
+AgregarOGP                          BIT                  1          No
+
+DATOS DE EJEMPLO (primeras 3 filas):
+
+Fila 1:
+   ID_Usuario: 1
+   Nombre_Usuario: Cordoba, Emanuel
+   Usuario: Ecordoba
+   Pass: 42603015
+   Admin: True
+   AgregarFalla: True
+   Lectura: True
+   UsuariosData: True
+   AgregarSeg: True
+   AgregarOGP: True
+
+Fila 2:
+   ID_Usuario: 2
+   Nombre_Usuario: Gomez, Estefanía
+   Usuario: Egomez
+   Pass: 1198
+   Admin: True
+   AgregarFalla: True
+   Lectura: True
+   UsuariosData: True
+   AgregarSeg: True
+   AgregarOGP: True
+
+Fila 3:
+   ID_Usuario: 3
+   Nombre_Usuario: General
+   Usuario: Lroca
+   Pass: Lroca
+   Admin: False
+   AgregarFalla: False
+   Lectura: True
+   UsuariosData: False
+   AgregarSeg: False
+   AgregarOGP: False
+

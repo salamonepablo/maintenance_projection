@@ -1,0 +1,105 @@
+╔═══════════════════════════════════════════════════════════════╗
+║           CHECKLIST - EXPLORACIÓN ACCESS                      ║
+║           Marca ☑ cada paso completado                        ║
+╚═══════════════════════════════════════════════════════════════╝
+
+
+PREPARACIÓN
+══════════════════════════════════════════════════════════════
+
+☐ 1. Instalar pyodbc
+     Comando: pip install pyodbc
+     
+☐ 2. Copiar archivos al proyecto
+     • test_connection.py
+     • Test-Connection.ps1
+     • explore_access.py
+     • Explore-Access.ps1
+     
+☐ 3. Tener la ruta exacta a tu Access
+     Ejemplo: C:\Data\SRMR\Flota.accdb
+     Tu ruta: _________________________________
+
+
+TEST RÁPIDO (Opcional pero recomendado)
+══════════════════════════════════════════════════════════════
+
+☐ 4. Ejecutar test de conexión
+     .\Test-Connection.ps1 -AccessPath "TU_RUTA"
+     
+     Resultado:
+     ☐ ✓ Conexión exitosa
+     ☐ ✗ Error (solucionar antes de continuar)
+
+
+EXPLORACIÓN COMPLETA
+══════════════════════════════════════════════════════════════
+
+☐ 5. Ejecutar explorador
+     .\Explore-Access.ps1 -AccessPath "TU_RUTA"
+     
+☐ 6. Abrir reporte generado
+     notepad access_report.txt
+
+
+REVISAR REPORTE
+══════════════════════════════════════════════════════════════
+
+☐ 7. Identificar tabla/consulta de MÓDULOS
+     Nombre: _________________________________
+     Registros: _______
+     
+☐ 8. Identificar tabla/consulta de MANTENIMIENTOS
+     Nombre: _________________________________
+     Registros: _______
+     
+☐ 9. Identificar tabla/consulta de LECTURAS/KMs
+     Nombre: _________________________________
+     Registros: _______
+
+
+COMPARTIR INFORMACIÓN
+══════════════════════════════════════════════════════════════
+
+☐ 10. Preparar info para compartir:
+      
+      Opción A: Captura de pantalla del reporte
+      ☐ Captura de lista de tablas
+      ☐ Captura de estructura de cada tabla principal
+      
+      Opción B: Pegar texto del reporte
+      ☐ Copiar secciones relevantes
+      
+      Opción C: Enviar archivo completo
+      ☐ Adjuntar access_report.txt
+
+
+LISTO PARA SIGUIENTE FASE
+══════════════════════════════════════════════════════════════
+
+☐ 11. Información completa compartida
+      ☐ Nombres de tablas/consultas
+      ☐ Estructura de campos
+      ☐ Ejemplos de datos
+      
+☐ 12. Listo para adaptación del código ✓
+
+
+═══════════════════════════════════════════════════════════════
+
+COMANDOS RÁPIDOS DE REFERENCIA:
+
+# Test
+.\Test-Connection.ps1 -AccessPath "C:\tu\base.accdb"
+
+# Exploración completa
+.\Explore-Access.ps1 -AccessPath "C:\tu\base.accdb"
+
+# Ver reporte
+notepad access_report.txt
+
+═══════════════════════════════════════════════════════════════
+
+TIEMPO ESTIMADO: 10-15 minutos total
+
+═══════════════════════════════════════════════════════════════
