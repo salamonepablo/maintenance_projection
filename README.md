@@ -1,6 +1,6 @@
 # Maintenance Projection - Material Rodante Argentino
 
-Sistema de proyección de mantenimiento ferroviario para la flota CSR (Coches Semi-Remolcados) de trenes argentinos.
+Sistema de proyección de mantenimiento ferroviario para la flota CSR (Coches Eléctricos) de trenes argentinos.
 
 ## 📋 Descripción
 
