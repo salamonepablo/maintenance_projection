@@ -764,23 +764,23 @@ DATOS DE EJEMPLO (primeras 3 filas):
 
 Fila 1:
    Id_CambMódulo: 1
-   Formación: F08
-   Módulo: T43
+   Formación: F120
+   Módulo: M45
    Cabina: A
    Fecha: 31/08/2015 00:00
 
 Fila 2:
    Id_CambMódulo: 2
-   Formación: F10
-   Módulo: T39
+   Formación: F120
+   Módulo: M20
    Cabina: B
    Fecha: 31/08/2015 00:00
 
 Fila 3:
    Id_CambMódulo: 3
-   Formación: F12
-   Módulo: T29
-   Cabina: B
+   Formación: F121
+   Módulo: M64
+   Cabina: A
    Fecha: 31/08/2015 00:00
 
 

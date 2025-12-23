@@ -134,3 +134,17 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# ==============================================================================
+# CONFIGURACIÓN DE SINCRONIZACIÓN CON ACCESS
+# ==============================================================================
+
+ACCESS_DATABASE_PATH = r'G:\Material Rodante\1-Servicio Eléctrico\DB\Base de Datos Mantenimiento\DB_CCEE_Mantenimiento 1.0.accdb'
+ACCESS_DATABASE_PASSWORD = '0733'
+
+ACCESS_CONNECTION_STRING = (
+    r'DRIVER={Microsoft Access Driver (*.mdb, *.accdb)};'
+    f'DBQ={ACCESS_DATABASE_PATH};'
+    f'PWD={ACCESS_DATABASE_PASSWORD};'
+    'ReadOnly=1;'
+)
