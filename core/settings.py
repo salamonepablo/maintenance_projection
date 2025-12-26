@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 
 import environ
 from pathlib import Path
+from decouple import config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -139,8 +140,9 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # CONFIGURACIÓN DE SINCRONIZACIÓN CON ACCESS
 # ==============================================================================
 
-ACCESS_DATABASE_PATH = r'G:\Material Rodante\1-Servicio Eléctrico\DB\Base de Datos Mantenimiento\DB_CCEE_Mantenimiento 1.0.accdb'
-ACCESS_DATABASE_PASSWORD = '0733'
+# Leer configuración desde .env (no hardcodear passwords)
+ACCESS_DATABASE_PATH = config('ACCESS_DB_PATH')
+ACCESS_DATABASE_PASSWORD = config('ACCESS_DB_PASSWORD')
 
 ACCESS_CONNECTION_STRING = (
     r'DRIVER={Microsoft Access Driver (*.mdb, *.accdb)};'

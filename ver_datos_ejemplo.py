@@ -4,8 +4,10 @@ Ver datos de ejemplo de las tablas candidatas para sincronización.
 import pyodbc
 from datetime import datetime
 
-backend_path = r'G:\Material Rodante\1-Servicio Eléctrico\DB\Base de Datos Mantenimiento\DB_CCEE_Mantenimiento 1.0.accdb'
-password = '0733'
+# backend_path = r'G:\Material Rodante\1-Servicio Eléctrico\DB\Base de Datos Mantenimiento\DB_CCEE_Mantenimiento 1.0.accdb'
+backend_path = r'C:\Users\pablo.salamone\Documents\BBDD\DB_CCEE_Programación 1.1.accdb'
+#password = '0733'
+password =''
 
 connection_string = (
     r'DRIVER={Microsoft Access Driver (*.mdb, *.accdb)};'
@@ -57,24 +59,21 @@ try:
     print("="*80)
     
     # 1. Módulos CSR
-    mostrar_tabla(cursor, "02_Módulos", "Módulo LIKE 'M%'", limit=5)
+    mostrar_tabla(cursor, "A_00_Módulos", "Módulos LIKE 'M%'", limit=5)
     
     # 2. Lecturas de Kilometraje
-    mostrar_tabla(cursor, "32_Lubricación_Pestaña", "Módulo LIKE 'M%'", limit=5)
+    mostrar_tabla(cursor, "A_00_Kilometrajes", "Módulo LIKE 'M%'", limit=5)
     
     # 3. Eventos - Opción 1
-    mostrar_tabla(cursor, "31_Eventos_Registros", "Módulo LIKE 'M%'", limit=5)
-    
-    # 4. Eventos - Opción 2
-    mostrar_tabla(cursor, "TblGeneral", "Módulo LIKE 'M%'", limit=5)
-    
-    # 5. Ver tipos de tareas en 31_Eventos_Registros
+    mostrar_tabla(cursor, "A_00_OT_Simaf", "Módulo LIKE 'M%'", limit=5)
+        
+    # 4. Ver tipos de tareas en A_00_OT_Simaf
     print("\n" + "="*80)
-    print("🔍 TIPOS DE TAREAS EN 31_Eventos_Registros (CSR)")
+    print("🔍 TIPOS DE TAREAS EN A_00_OT_Simaf (CSR)")
     print("="*80)
     cursor.execute("""
         SELECT DISTINCT Tarea, COUNT(*) as Total
-        FROM [31_Eventos_Registros]
+        FROM [A_00_OT_Simaf]
         WHERE Módulo LIKE 'M%'
         GROUP BY Tarea
         ORDER BY COUNT(*) DESC
