@@ -54,11 +54,28 @@ class AccessExtractor:
     
     # Mapeo de ciclos Access → Django/CNRT
     CYCLE_MAPPING = {
-        'IQ': 'IQ',  # Quincenal
-        'IB': 'B',   # Bimestral
-        'AN': 'A',   # Anual
-        'BA': 'BI',  # Bianual
-        'RS': 'P',   # Pentanual
+        # Quincenal (y variantes)
+        'IQ': 'IQ',
+        'IQ1': 'IQ',
+        'IQ2': 'IQ',
+        'IQ3': 'IQ',
+        # Bimestral
+        'IB': 'B',
+        # Anual (y variantes)
+        'AN': 'A',
+        'AN1': 'A',
+        'AN2': 'A',
+        'AN3': 'A',
+        'AN4': 'A',
+        'AN5': 'A',
+        'AN6': 'A',
+        # Bianual (y variantes)
+        'BA': 'BI',
+        'BA1': 'BI',
+        'BA2': 'BI',
+        'BA3': 'BI',
+        # Pentanual
+        'RS': 'P',
         # DE no existe aún en Access
     }
     
@@ -102,19 +119,33 @@ class AccessExtractor:
         self.disconnect()
     
     @staticmethod
-    def extract_module_number(module_id: str) -> Optional[int]:
+    def extract_module_number(module_id) -> Optional[int]:
         """
         Extrae el número de un módulo.
         
         Args:
-            module_id: ID del módulo (ej: 'M01', 'M10', 'M45')
+            module_id: ID del módulo (puede ser int como 1, 2, 3 o str como 'M01', '1')
         
         Returns:
             Número del módulo (1, 10, 45) o None si no es válido
         """
-        match = re.match(r'M(\d+)', module_id)
-        if match:
-            return int(match.group(1))
+        # Si ya es un entero, retornarlo
+        if isinstance(module_id, int):
+            return module_id
+        
+        # Si es string, intentar convertir
+        if isinstance(module_id, str):
+            # Intentar formato M01, M02, etc.
+            match = re.match(r'M(\d+)', module_id)
+            if match:
+                return int(match.group(1))
+            
+            # Intentar convertir directo a int
+            try:
+                return int(module_id)
+            except ValueError:
+                pass
+        
         return None
     
     @staticmethod
@@ -123,7 +154,7 @@ class AccessExtractor:
         Normaliza el tipo de mantenimiento desde Access a Django.
         
         Args:
-            raw_task: Tarea de Access (ej: 'IQ', 'IB', 'AN1', 'BA2')
+            raw_task: Tarea de Access (ej: 'IQ', 'IQ1', 'IB', 'AN1', 'BA2')
         
         Returns:
             Tipo normalizado (IQ, B, A, BI, P, DE) o None si no es válido
@@ -131,18 +162,28 @@ class AccessExtractor:
         if not raw_task:
             return None
         
-        # Extraer primeros 2 caracteres
-        task_code = raw_task[:2].upper()
+        # Normalizar (trim y mayúsculas)
+        task_code = raw_task.strip().upper()
         
-        # Mapear según tabla de equivalencias
-        return AccessExtractor.CYCLE_MAPPING.get(task_code)
+        # Buscar en mapeo (intenta coincidencia exacta primero)
+        if task_code in AccessExtractor.CYCLE_MAPPING:
+            return AccessExtractor.CYCLE_MAPPING[task_code]
+        
+        # Si no coincide exactamente, intentar con primeros 2 caracteres
+        # (para casos como "AN$" que no están en el mapping)
+        if len(task_code) >= 2:
+            prefix = task_code[:2]
+            if prefix in AccessExtractor.CYCLE_MAPPING:
+                return AccessExtractor.CYCLE_MAPPING[prefix]
+        
+        return None
     
     def get_active_modules(self) -> List[ModuleData]:
         """
         Obtiene lista de módulos CSR activos.
         
-        Extrae módulos únicos de A_00_Kilometrajes y A_00_OT_Consulta,
-        y los enriquece con información de formación.
+        Extrae módulos únicos de A_00_Kilometrajes y A_00_OT_Simaf,
+        filtrando por Clase_Vehículos = 'C' (CSR) mediante JOIN con A_00_Módulos.
         
         Returns:
             Lista de ModuleData
@@ -153,44 +194,46 @@ class AccessExtractor:
         cursor = self.conn.cursor()
         modules_dict: Dict[str, ModuleData] = {}
         
-        # Obtener módulos de kilometrajes
+        # Obtener módulos de kilometrajes (CSR: Clase_Vehículos = 'C')
         try:
             cursor.execute("""
-                SELECT DISTINCT Módulo
-                FROM A_00_Kilometrajes
-                WHERE Módulo LIKE 'M%'
-                ORDER BY Módulo
+                SELECT DISTINCT m.Módulos, m.Id_Módulos
+                FROM A_00_Kilometrajes AS k
+                INNER JOIN A_00_Módulos AS m ON k.Módulo = m.Id_Módulos
+                WHERE m.Clase_Vehículos = 'C'
+                ORDER BY m.Módulos
             """)
             
             for row in cursor.fetchall():
-                module_id = row[0].strip() if row[0] else None
-                if module_id:
-                    module_num = self.extract_module_number(module_id)
-                    if module_num:
-                        modules_dict[module_id] = ModuleData(
-                            module_number=module_num,
-                            module_id=module_id
-                        )
+                module_id = row[0]  # "M01", "M02", etc.
+                module_num = self.extract_module_number(module_id)
+                
+                if module_id and module_num:
+                    modules_dict[module_id] = ModuleData(
+                        module_number=module_num,
+                        module_id=module_id
+                    )
         except pyodbc.Error as e:
             print(f"Error obteniendo módulos de kilometrajes: {e}")
         
-        # Obtener módulos de mantenimientos
+        # Obtener módulos de mantenimientos (CSR: Clase_Vehículos = 'C')
         try:
             cursor.execute("""
-                SELECT DISTINCT Módulo
-                FROM A_00_OT_Simaf
-                WHERE Módulo LIKE 'M%'
+                SELECT DISTINCT m.Módulos, m.Id_Módulos
+                FROM A_00_OT_Simaf AS ot
+                INNER JOIN A_00_Módulos AS m ON ot.Módulo = m.Id_Módulos
+                WHERE m.Clase_Vehículos = 'C'
             """)
             
             for row in cursor.fetchall():
-                module_id = row[0].strip() if row[0] else None
-                if module_id and module_id not in modules_dict:
-                    module_num = self.extract_module_number(module_id)
-                    if module_num:
-                        modules_dict[module_id] = ModuleData(
-                            module_number=module_num,
-                            module_id=module_id
-                        )
+                module_id = row[0]  # "M01", "M02", etc.
+                module_num = self.extract_module_number(module_id)
+                
+                if module_id and module_num and module_id not in modules_dict:
+                    modules_dict[module_id] = ModuleData(
+                        module_number=module_num,
+                        module_id=module_id
+                    )
         except pyodbc.Error as e:
             print(f"Error obteniendo módulos de mantenimientos: {e}")
         
@@ -223,6 +266,8 @@ class AccessExtractor:
         """
         Obtiene eventos de mantenimiento desde A_00_OT_Simaf.
         
+        Filtra por Clase_Vehículos = 'C' (CSR) mediante JOIN con A_00_Módulos.
+        
         Args:
             module_id: Filtrar por módulo específico (ej: 'M01')
             since_date: Obtener solo eventos desde esta fecha
@@ -236,34 +281,35 @@ class AccessExtractor:
         cursor = self.conn.cursor()
         events = []
         
-        # Construir query
+        # Construir query (CSR: Clase_Vehículos = 'C')
         query = """
-            SELECT Módulo, Tarea, Km, Fecha_Fin
-            FROM A_00_OT_Simaf
-            WHERE Módulo LIKE 'M%'
+            SELECT m.Módulos, ot.Tarea, ot.Km, ot.Fecha_Fin
+            FROM A_00_OT_Simaf AS ot
+            INNER JOIN A_00_Módulos AS m ON ot.Módulo = m.Id_Módulos
+            WHERE m.Clase_Vehículos = 'C'
         """
         params = []
         
         if module_id:
-            query += " AND Módulo = ?"
+            query += " AND m.Módulos = ?"
             params.append(module_id)
         
         if since_date:
-            query += " AND Fecha_Fin >= ?"
+            query += " AND ot.Fecha_Fin >= ?"
             params.append(since_date)
         
-        query += " ORDER BY Fecha_Fin DESC"
+        query += " ORDER BY ot.Fecha_Fin DESC"
         
         try:
             cursor.execute(query, params)
             
             for row in cursor.fetchall():
-                module = row[0].strip() if row[0] else None
+                module_id_str = row[0]  # "M01", "M02", etc.
                 raw_task = row[1].strip() if row[1] else None
                 km = row[2] if row[2] is not None else 0
                 fecha_fin = row[3]
                 
-                if not module or not raw_task or not fecha_fin:
+                if not module_id_str or not raw_task or not fecha_fin:
                     continue
                 
                 # Normalizar tipo de mantenimiento
@@ -275,7 +321,7 @@ class AccessExtractor:
                 event_date = fecha_fin.date() if isinstance(fecha_fin, datetime) else fecha_fin
                 
                 events.append(MaintenanceEventData(
-                    module_id=module,
+                    module_id=module_id_str,
                     maintenance_type=maint_type,
                     event_date=event_date,
                     odometer_km=int(km),
@@ -299,8 +345,10 @@ class AccessExtractor:
         """
         Obtiene lecturas de odómetro desde A_00_Kilometrajes.
         
+        Filtra por Clase_Vehículos = 'C' (CSR) mediante JOIN con A_00_Módulos.
+        
         Args:
-            module_id: Filtrar por módulo específico
+            module_id: Filtrar por módulo específico (ej: 'M01')
             since_date: Obtener solo lecturas desde esta fecha
             limit: Límite de registros (más recientes primero)
         
@@ -313,26 +361,27 @@ class AccessExtractor:
         cursor = self.conn.cursor()
         readings = []
         
-        # Construir query
+        # Construir query (CSR: Clase_Vehículos = 'C')
         query_parts = ["SELECT"]
         if limit:
             query_parts.append(f"TOP {limit}")
         
-        query_parts.append("Módulo, kilometraje, Fecha")
-        query_parts.append("FROM A_00_Kilometrajes")
-        query_parts.append("WHERE Módulo LIKE 'M%'")
+        query_parts.append("m.Módulos, k.kilometraje, k.Fecha")
+        query_parts.append("FROM A_00_Kilometrajes AS k")
+        query_parts.append("INNER JOIN A_00_Módulos AS m ON k.Módulo = m.Id_Módulos")
+        query_parts.append("WHERE m.Clase_Vehículos = 'C'")
         
         params = []
         
         if module_id:
-            query_parts.append("AND Módulo = ?")
+            query_parts.append("AND m.Módulos = ?")
             params.append(module_id)
         
         if since_date:
-            query_parts.append("AND Fecha >= ?")
+            query_parts.append("AND k.Fecha >= ?")
             params.append(since_date)
         
-        query_parts.append("ORDER BY Fecha DESC")
+        query_parts.append("ORDER BY k.Fecha DESC")
         
         query = " ".join(query_parts)
         
@@ -340,18 +389,18 @@ class AccessExtractor:
             cursor.execute(query, params)
             
             for row in cursor.fetchall():
-                module = row[0].strip() if row[0] else None
+                module_id_str = row[0]  # "M01", "M02", etc.
                 kilometraje = row[1] if row[1] is not None else 0
                 fecha = row[2]
                 
-                if not module or not fecha:
+                if not module_id_str or not fecha:
                     continue
                 
                 # Convertir fecha
                 reading_date = fecha.date() if isinstance(fecha, datetime) else fecha
                 
                 readings.append(OdometerReadingData(
-                    module_id=module,
+                    module_id=module_id_str,
                     reading_date=reading_date,
                     odometer_reading=int(kilometraje)
                 ))
@@ -396,27 +445,30 @@ class AccessExtractor:
         stats = {"connected": True}
         
         try:
-            # Contar módulos
+            # Contar módulos (CSR: Clase_Vehículos = 'C')
             cursor.execute("""
-                SELECT COUNT(DISTINCT Módulo)
-                FROM A_00_Kilometrajes
-                WHERE Módulo LIKE 'M%'
+                SELECT COUNT(DISTINCT m.Módulos)
+                FROM A_00_Kilometrajes AS k
+                INNER JOIN A_00_Módulos AS m ON k.Módulo = m.Id_Módulos
+                WHERE m.Clase_Vehículos = 'C'
             """)
             stats["modules_count"] = cursor.fetchone()[0]
             
-            # Contar eventos
+            # Contar eventos (CSR: Clase_Vehículos = 'C')
             cursor.execute("""
                 SELECT COUNT(*)
-                FROM A_00_OT_Simaf
-                WHERE Módulo LIKE 'M%'
+                FROM A_00_OT_Simaf AS ot
+                INNER JOIN A_00_Módulos AS m ON ot.Módulo = m.Id_Módulos
+                WHERE m.Clase_Vehículos = 'C'
             """)
             stats["events_count"] = cursor.fetchone()[0]
             
-            # Contar lecturas
+            # Contar lecturas (CSR: Clase_Vehículos = 'C')
             cursor.execute("""
                 SELECT COUNT(*)
-                FROM A_00_Kilometrajes
-                WHERE Módulo LIKE 'M%'
+                FROM A_00_Kilometrajes AS k
+                INNER JOIN A_00_Módulos AS m ON k.Módulo = m.Id_Módulos
+                WHERE m.Clase_Vehículos = 'C'
             """)
             stats["readings_count"] = cursor.fetchone()[0]
             
