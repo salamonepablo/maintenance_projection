@@ -486,7 +486,7 @@ if __name__ == '__main__':
     # Connection string de ejemplo
     conn_str = (
         r'DRIVER={Microsoft Access Driver (*.mdb, *.accdb)};'
-        r'DBQ=C:\Users\pablo\Documents\BBDD\DB_CCEE_Programación 1.1.accdb;'
+        r'DBQ=C:\Users\pablo.salamone\Documents\BBDD\DB_CCEE_Programación 1.1.accdb;'
         'PWD='';'
         'ReadOnly=1;'
     )
