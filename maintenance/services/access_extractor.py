@@ -6,11 +6,11 @@ Este servicio extrae datos de Access para sincronizar con Django.
 Fuentes de datos:
 - A_00_Kilometrajes: Lecturas de odómetro
 - A_00_OT_Simaf: Eventos de mantenimiento
-- 01_Coches: Maestro de coches
-- 11_CambioCoches: Relación Coche-Módulo
-- 12_CambioMódulos: Relación Módulo-Formación
+- A_00_Módulos: Maestro de módulos con Clase_Vehículos
 
-Filtro: Solo módulos CSR (Módulo LIKE 'M%')
+JOIN validado: 
+- ot.Módulo (FK int) = m.Id_Módulos (PK int)
+- Filtro: m.Clase_Vehículos = 3 (CSR)
 """
 from __future__ import annotations
 
@@ -183,7 +183,9 @@ class AccessExtractor:
         Obtiene lista de módulos CSR activos.
         
         Extrae módulos únicos de A_00_Kilometrajes y A_00_OT_Simaf,
-        filtrando por Clase_Vehículos = 'C' (CSR) mediante JOIN con A_00_Módulos.
+        filtrando por Clase_Vehículos = 3 (CSR) mediante JOIN con A_00_Módulos.
+        
+        JOIN validado: ot.Módulo (FK int) = m.Id_Módulos (PK int)
         
         Returns:
             Lista de ModuleData
@@ -194,13 +196,13 @@ class AccessExtractor:
         cursor = self.conn.cursor()
         modules_dict: Dict[str, ModuleData] = {}
         
-        # Obtener módulos de kilometrajes (CSR: Clase_Vehículos = 'C')
+        # Obtener módulos de kilometrajes (CSR: Clase_Vehículos = 3)
         try:
             cursor.execute("""
-                SELECT DISTINCT m.Módulos, m.Id_Módulos
+                SELECT DISTINCT m.Módulos
                 FROM A_00_Kilometrajes AS k
                 INNER JOIN A_00_Módulos AS m ON k.Módulo = m.Id_Módulos
-                WHERE m.Clase_Vehículos = 'C'
+                WHERE m.Clase_Vehículos = 3
                 ORDER BY m.Módulos
             """)
             
@@ -216,13 +218,13 @@ class AccessExtractor:
         except pyodbc.Error as e:
             print(f"Error obteniendo módulos de kilometrajes: {e}")
         
-        # Obtener módulos de mantenimientos (CSR: Clase_Vehículos = 'C')
+        # Obtener módulos de mantenimientos (CSR: Clase_Vehículos = 3)
         try:
             cursor.execute("""
-                SELECT DISTINCT m.Módulos, m.Id_Módulos
+                SELECT DISTINCT m.Módulos
                 FROM A_00_OT_Simaf AS ot
                 INNER JOIN A_00_Módulos AS m ON ot.Módulo = m.Id_Módulos
-                WHERE m.Clase_Vehículos = 'C'
+                WHERE m.Clase_Vehículos = 3
             """)
             
             for row in cursor.fetchall():
@@ -266,7 +268,8 @@ class AccessExtractor:
         """
         Obtiene eventos de mantenimiento desde A_00_OT_Simaf.
         
-        Filtra por Clase_Vehículos = 'C' (CSR) mediante JOIN con A_00_Módulos.
+        Filtra por Clase_Vehículos = 3 (CSR) mediante JOIN validado.
+        JOIN: ot.Módulo (FK int) = m.Id_Módulos (PK int)
         
         Args:
             module_id: Filtrar por módulo específico (ej: 'M01')
@@ -281,12 +284,12 @@ class AccessExtractor:
         cursor = self.conn.cursor()
         events = []
         
-        # Construir query (CSR: Clase_Vehículos = 'C')
+        # Construir query (CSR: Clase_Vehículos = 3)
         query = """
             SELECT m.Módulos, ot.Tarea, ot.Km, ot.Fecha_Fin
             FROM A_00_OT_Simaf AS ot
             INNER JOIN A_00_Módulos AS m ON ot.Módulo = m.Id_Módulos
-            WHERE m.Clase_Vehículos = 'C'
+            WHERE m.Clase_Vehículos = 3
         """
         params = []
         
@@ -345,7 +348,8 @@ class AccessExtractor:
         """
         Obtiene lecturas de odómetro desde A_00_Kilometrajes.
         
-        Filtra por Clase_Vehículos = 'C' (CSR) mediante JOIN con A_00_Módulos.
+        Filtra por Clase_Vehículos = 3 (CSR) mediante JOIN validado.
+        JOIN: k.Módulo (FK int) = m.Id_Módulos (PK int)
         
         Args:
             module_id: Filtrar por módulo específico (ej: 'M01')
@@ -361,7 +365,7 @@ class AccessExtractor:
         cursor = self.conn.cursor()
         readings = []
         
-        # Construir query (CSR: Clase_Vehículos = 'C')
+        # Construir query (CSR: Clase_Vehículos = 3)
         query_parts = ["SELECT"]
         if limit:
             query_parts.append(f"TOP {limit}")
@@ -369,7 +373,7 @@ class AccessExtractor:
         query_parts.append("m.Módulos, k.kilometraje, k.Fecha")
         query_parts.append("FROM A_00_Kilometrajes AS k")
         query_parts.append("INNER JOIN A_00_Módulos AS m ON k.Módulo = m.Id_Módulos")
-        query_parts.append("WHERE m.Clase_Vehículos = 'C'")
+        query_parts.append("WHERE m.Clase_Vehículos = 3")
         
         params = []
         
@@ -434,6 +438,8 @@ class AccessExtractor:
         """
         Prueba la conexión y retorna estadísticas básicas.
         
+        Cuenta registros CSR (Clase_Vehículos = 3) mediante JOIN validado.
+        
         Returns:
             Dict con información de la conexión
         """
@@ -445,30 +451,30 @@ class AccessExtractor:
         stats = {"connected": True}
         
         try:
-            # Contar módulos (CSR: Clase_Vehículos = 'C')
+            # Contar módulos (CSR: Clase_Vehículos = 3)
             cursor.execute("""
                 SELECT COUNT(DISTINCT m.Módulos)
                 FROM A_00_Kilometrajes AS k
                 INNER JOIN A_00_Módulos AS m ON k.Módulo = m.Id_Módulos
-                WHERE m.Clase_Vehículos = 'C'
+                WHERE m.Clase_Vehículos = 3
             """)
             stats["modules_count"] = cursor.fetchone()[0]
             
-            # Contar eventos (CSR: Clase_Vehículos = 'C')
+            # Contar eventos (CSR: Clase_Vehículos = 3)
             cursor.execute("""
                 SELECT COUNT(*)
                 FROM A_00_OT_Simaf AS ot
                 INNER JOIN A_00_Módulos AS m ON ot.Módulo = m.Id_Módulos
-                WHERE m.Clase_Vehículos = 'C'
+                WHERE m.Clase_Vehículos = 3
             """)
             stats["events_count"] = cursor.fetchone()[0]
             
-            # Contar lecturas (CSR: Clase_Vehículos = 'C')
+            # Contar lecturas (CSR: Clase_Vehículos = 3)
             cursor.execute("""
                 SELECT COUNT(*)
                 FROM A_00_Kilometrajes AS k
                 INNER JOIN A_00_Módulos AS m ON k.Módulo = m.Id_Módulos
-                WHERE m.Clase_Vehículos = 'C'
+                WHERE m.Clase_Vehículos = 3
             """)
             stats["readings_count"] = cursor.fetchone()[0]
             
