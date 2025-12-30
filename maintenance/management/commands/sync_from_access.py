@@ -119,11 +119,13 @@ class Command(BaseCommand):
                 self.stdout.write('')
                 
                 # Sincronizar módulos
+                modules_synced = 0
                 if sync_modules:
                     modules_synced = self._sync_modules(extractor, is_test)
                     self.stdout.write('')
                 
                 # Sincronizar eventos
+                events_synced = 0
                 if sync_events:
                     events_synced = self._sync_events(
                         extractor, is_test, since_date
@@ -131,6 +133,7 @@ class Command(BaseCommand):
                     self.stdout.write('')
                 
                 # Sincronizar lecturas
+                readings_synced = 0
                 if sync_readings:
                     readings_synced = self._sync_readings(
                         extractor, is_test, since_date
@@ -179,12 +182,12 @@ class Command(BaseCommand):
         with transaction.atomic():
             for mod_data in modules_data:
                 module, created = FleetModule.objects.update_or_create(
-                    module_number=mod_data.module_number,
+                    id=mod_data.module_number,  # ✅ Corregido: id es la PK
                     defaults={
                         'module_type': self._determine_module_type(
                             mod_data.module_number
                         ),
-                        'is_active': True,
+                        'in_service_date': date(2020, 1, 1),  # ✅ Agregado: fecha placeholder
                     }
                 )
                 
@@ -243,7 +246,7 @@ class Command(BaseCommand):
                     continue
                 
                 try:
-                    module = FleetModule.objects.get(module_number=module_num)
+                    module = FleetModule.objects.get(id=module_num)  # ✅ Corregido: id en vez de module_number
                 except FleetModule.DoesNotExist:
                     self.stdout.write(
                         self.style.WARNING(
@@ -256,7 +259,7 @@ class Command(BaseCommand):
                 # Buscar perfil de mantenimiento
                 try:
                     profile = MaintenanceProfile.objects.get(
-                        cycle_type=evt_data.maintenance_type
+                        code=evt_data.maintenance_type  # ✅ Corregido: code en vez de cycle_type
                     )
                 except MaintenanceProfile.DoesNotExist:
                     self.stdout.write(
@@ -269,7 +272,7 @@ class Command(BaseCommand):
                 
                 # Crear o actualizar evento
                 event, created = MaintenanceEvent.objects.get_or_create(
-                    module=module,
+                    fleet_module=module,  # ✅ Corregido: fleet_module en vez de module
                     profile=profile,
                     event_date=evt_data.event_date,
                     defaults={
@@ -337,7 +340,7 @@ class Command(BaseCommand):
                     continue
                 
                 try:
-                    module = FleetModule.objects.get(module_number=module_num)
+                    module = FleetModule.objects.get(id=module_num)  # ✅ Corregido: id en vez de module_number
                 except FleetModule.DoesNotExist:
                     self.stdout.write(
                         self.style.WARNING(
@@ -349,7 +352,7 @@ class Command(BaseCommand):
                 
                 # Crear lectura (solo si no existe ya)
                 _, created = OdometerLog.objects.get_or_create(
-                    module=module,
+                    fleet_module=module,  # ✅ Corregido: fleet_module en vez de module
                     reading_date=reading_data.reading_date,
                     defaults={
                         'odometer_reading': reading_data.odometer_reading,
@@ -385,9 +388,9 @@ class Command(BaseCommand):
             'CUADRUPLA' o 'TRIPLA'
         """
         if module_number <= 42:
-            return 'CUADRUPLA'
+            return FleetModule.ModuleType.CUADRUPLA
         else:
-            return 'TRIPLA'
+            return FleetModule.ModuleType.TRIPLA
     
     @staticmethod
     def _parse_date(date_str: Optional[str]) -> Optional[date]:
