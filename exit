@@ -1,0 +1,165 @@
+warning: in the working copy of 'maintenance/services/access_extractor.py', LF will be replaced by CRLF the next time Git touches it
+[1mdiff --git a/maintenance/services/access_extractor.py b/maintenance/services/access_extractor.py[m
+[1mindex c6d9f3a..341884f 100644[m
+[1m--- a/maintenance/services/access_extractor.py[m
+[1m+++ b/maintenance/services/access_extractor.py[m
+[36m@@ -6,11 +6,11 @@[m [mEste servicio extrae datos de Access para sincronizar con Django.[m
+ Fuentes de datos:[m
+ - A_00_Kilometrajes: Lecturas de odómetro[m
+ - A_00_OT_Simaf: Eventos de mantenimiento[m
+[31m-- 01_Coches: Maestro de coches[m
+[31m-- 11_CambioCoches: Relación Coche-Módulo[m
+[31m-- 12_CambioMódulos: Relación Módulo-Formación[m
+[32m+[m[32m- A_00_Módulos: Maestro de módulos con Clase_Vehículos[m
+ [m
+[31m-Filtro: Solo módulos CSR (Módulo LIKE 'M%')[m
+[32m+[m[32mJOIN validado:[m[41m [m
+[32m+[m[32m- ot.Módulo (FK int) = m.Id_Módulos (PK int)[m
+[32m+[m[32m- Filtro: m.Clase_Vehículos = 3 (CSR)[m
+ """[m
+ from __future__ import annotations[m
+ [m
+[36m@@ -183,7 +183,9 @@[m [mclass AccessExtractor:[m
+         Obtiene lista de módulos CSR activos.[m
+         [m
+         Extrae módulos únicos de A_00_Kilometrajes y A_00_OT_Simaf,[m
+[31m-        filtrando por Clase_Vehículos = 'C' (CSR) mediante JOIN con A_00_Módulos.[m
+[32m+[m[32m        filtrando por Clase_Vehículos = 3 (CSR) mediante JOIN con A_00_Módulos.[m
+[32m+[m[41m        [m
+[32m+[m[32m        JOIN validado: ot.Módulo (FK int) = m.Id_Módulos (PK int)[m
+         [m
+         Returns:[m
+             Lista de ModuleData[m
+[36m@@ -194,13 +196,13 @@[m [mclass AccessExtractor:[m
+         cursor = self.conn.cursor()[m
+         modules_dict: Dict[str, ModuleData] = {}[m
+         [m
+[31m-        # Obtener módulos de kilometrajes (CSR: Clase_Vehículos = 'C')[m
+[32m+[m[32m        # Obtener módulos de kilometrajes (CSR: Clase_Vehículos = 3)[m
+         try:[m
+             cursor.execute("""[m
+[31m-                SELECT DISTINCT m.Módulos, m.Id_Módulos[m
+[32m+[m[32m                SELECT DISTINCT m.Módulos[m
+                 FROM A_00_Kilometrajes AS k[m
+                 INNER JOIN A_00_Módulos AS m ON k.Módulo = m.Id_Módulos[m
+[31m-                WHERE m.Clase_Vehículos = 'C'[m
+[32m+[m[32m                WHERE m.Clase_Vehículos = 3[m
+                 ORDER BY m.Módulos[m
+             """)[m
+             [m
+[36m@@ -216,13 +218,13 @@[m [mclass AccessExtractor:[m
+         except pyodbc.Error as e:[m
+             print(f"Error obteniendo módulos de kilometrajes: {e}")[m
+         [m
+[31m-        # Obtener módulos de mantenimientos (CSR: Clase_Vehículos = 'C')[m
+[32m+[m[32m        # Obtener módulos de mantenimientos (CSR: Clase_Vehículos = 3)[m
+         try:[m
+             cursor.execute("""[m
+[31m-                SELECT DISTINCT m.Módulos, m.Id_Módulos[m
+[32m+[m[32m                SELECT DISTINCT m.Módulos[m
+                 FROM A_00_OT_Simaf AS ot[m
+                 INNER JOIN A_00_Módulos AS m ON ot.Módulo = m.Id_Módulos[m
+[31m-                WHERE m.Clase_Vehículos = 'C'[m
+[32m+[m[32m                WHERE m.Clase_Vehículos = 3[m
+             """)[m
+             [m
+             for row in cursor.fetchall():[m
+[36m@@ -266,7 +268,8 @@[m [mclass AccessExtractor:[m
+         """[m
+         Obtiene eventos de mantenimiento desde A_00_OT_Simaf.[m
+         [m
+[31m-        Filtra por Clase_Vehículos = 'C' (CSR) mediante JOIN con A_00_Módulos.[m
+[32m+[m[32m        Filtra por Clase_Vehículos = 3 (CSR) mediante JOIN validado.[m
+[32m+[m[32m        JOIN: ot.Módulo (FK int) = m.Id_Módulos (PK int)[m
+         [m
+         Args:[m
+             module_id: Filtrar por módulo específico (ej: 'M01')[m
+[36m@@ -281,12 +284,12 @@[m [mclass AccessExtractor:[m
+         cursor = self.conn.cursor()[m
+         events = [][m
+         [m
+[31m-        # Construir query (CSR: Clase_Vehículos = 'C')[m
+[32m+[m[32m        # Construir query (CSR: Clase_Vehículos = 3)[m
+         query = """[m
+             SELECT m.Módulos, ot.Tarea, ot.Km, ot.Fecha_Fin[m
+             FROM A_00_OT_Simaf AS ot[m
+             INNER JOIN A_00_Módulos AS m ON ot.Módulo = m.Id_Módulos[m
+[31m-            WHERE m.Clase_Vehículos = 'C'[m
+[32m+[m[32m            WHERE m.Clase_Vehículos = 3[m
+         """[m
+         params = [][m
+         [m
+[36m@@ -345,7 +348,8 @@[m [mclass AccessExtractor:[m
+         """[m
+         Obtiene lecturas de odómetro desde A_00_Kilometrajes.[m
+         [m
+[31m-        Filtra por Clase_Vehículos = 'C' (CSR) mediante JOIN con A_00_Módulos.[m
+[32m+[m[32m        Filtra por Clase_Vehículos = 3 (CSR) mediante JOIN validado.[m
+[32m+[m[32m        JOIN: k.Módulo (FK int) = m.Id_Módulos (PK int)[m
+         [m
+         Args:[m
+             module_id: Filtrar por módulo específico (ej: 'M01')[m
+[36m@@ -361,7 +365,7 @@[m [mclass AccessExtractor:[m
+         cursor = self.conn.cursor()[m
+         readings = [][m
+         [m
+[31m-        # Construir query (CSR: Clase_Vehículos = 'C')[m
+[32m+[m[32m        # Construir query (CSR: Clase_Vehículos = 3)[m
+         query_parts = ["SELECT"][m
+         if limit:[m
+             query_parts.append(f"TOP {limit}")[m
+[36m@@ -369,7 +373,7 @@[m [mclass AccessExtractor:[m
+         query_parts.append("m.Módulos, k.kilometraje, k.Fecha")[m
+         query_parts.append("FROM A_00_Kilometrajes AS k")[m
+         query_parts.append("INNER JOIN A_00_Módulos AS m ON k.Módulo = m.Id_Módulos")[m
+[31m-        query_parts.append("WHERE m.Clase_Vehículos = 'C'")[m
+[32m+[m[32m        query_parts.append("WHERE m.Clase_Vehículos = 3")[m
+         [m
+         params = [][m
+         [m
+[36m@@ -434,6 +438,8 @@[m [mclass AccessExtractor:[m
+         """[m
+         Prueba la conexión y retorna estadísticas básicas.[m
+         [m
+[32m+[m[32m        Cuenta registros CSR (Clase_Vehículos = 3) mediante JOIN validado.[m
+[32m+[m[41m        [m
+         Returns:[m
+             Dict con información de la conexión[m
+         """[m
+[36m@@ -445,30 +451,30 @@[m [mclass AccessExtractor:[m
+         stats = {"connected": True}[m
+         [m
+         try:[m
+[31m-            # Contar módulos (CSR: Clase_Vehículos = 'C')[m
+[32m+[m[32m            # Contar módulos (CSR: Clase_Vehículos = 3)[m
+             cursor.execute("""[m
+                 SELECT COUNT(DISTINCT m.Módulos)[m
+                 FROM A_00_Kilometrajes AS k[m
+                 INNER JOIN A_00_Módulos AS m ON k.Módulo = m.Id_Módulos[m
+[31m-                WHERE m.Clase_Vehículos = 'C'[m
+[32m+[m[32m                WHERE m.Clase_Vehículos = 3[m
+             """)[m
+             stats["modules_count"] = cursor.fetchone()[0][m
+             [m
+[31m-            # Contar eventos (CSR: Clase_Vehículos = 'C')[m
+[32m+[m[32m            # Contar eventos (CSR: Clase_Vehículos = 3)[m
+             cursor.execute("""[m
+                 SELECT COUNT(*)[m
+                 FROM A_00_OT_Simaf AS ot[m
+                 INNER JOIN A_00_Módulos AS m ON ot.Módulo = m.Id_Módulos[m
+[31m-                WHERE m.Clase_Vehículos = 'C'[m
+[32m+[m[32m                WHERE m.Clase_Vehículos = 3[m
+             """)[m
+             stats["events_count"] = cursor.fetchone()[0][m
+             [m
+[31m-            # Contar lecturas (CSR: Clase_Vehículos = 'C')[m
+[32m+[m[32m            # Contar lecturas (CSR: Clase_Vehículos = 3)[m
+             cursor.execute("""[m
+                 SELECT COUNT(*)[m
+                 FROM A_00_Kilometrajes AS k[m
+                 INNER JOIN A_00_Módulos AS m ON k.Módulo = m.Id_Módulos[m
+[31m-                WHERE m.Clase_Vehículos = 'C'[m
+[32m+[m[32m                WHERE m.Clase_Vehículos = 3[m
+             """)[m
+             stats["readings_count"] = cursor.fetchone()[0][m
+             [m
